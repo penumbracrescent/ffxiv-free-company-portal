@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Collectables and scrip progression route</title>
+  <desc id="desc">A four-step route from unlocking collectables through crafting, gathering, appraisal, and permanent unlock purchases.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#150425"/><stop offset="1" stop-color="#351062"/></linearGradient>
+    <linearGradient id="coin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd978"/><stop offset="1" stop-color="#d99530"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L9 3L0 6Z" fill="#c895ff"/></marker>
+    <style>.title{font:800 25px system-ui,sans-serif;fill:#fff}.head{font:750 19px system-ui,sans-serif;fill:#fff}.copy{font:14px system-ui,sans-serif;fill:#e3d7ef}.box{fill:#0d0319;stroke:#76549a;stroke-width:2}.path{stroke:#c895ff;stroke-width:4;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1200" height="520" rx="30" fill="url(#bg)"/>
+  <text x="48" y="58" class="title">COLLECTABLES — FROM FIRST UNLOCK TO PERMANENT BOOKS</text>
+  <path class="path" d="M268 235H330M548 235H610M828 235H890"/>
+  <g transform="translate(48 145)"><rect class="box" width="220" height="180" rx="20"/><text x="22" y="44" class="head">1. Unlock</text><text x="22" y="78" class="copy">Inscrutable Tastes</text><text x="22" y="103" class="copy">Expansion vendors</text><text x="22" y="128" class="copy">Appraisers and exchanges</text></g>
+  <g transform="translate(328 145)"><rect class="box" width="220" height="180" rx="20"/><text x="22" y="44" class="head">2. Produce</text><text x="22" y="78" class="copy">Special recipes</text><text x="22" y="103" class="copy">Gathering appraisal</text><text x="22" y="128" class="copy">Collect-enabled fishing</text></g>
+  <g transform="translate(608 145)"><rect class="box" width="220" height="180" rx="20"/><text x="22" y="44" class="head">3. Appraise</text><text x="22" y="78" class="copy">Meet a reward tier</text><text x="22" y="103" class="copy">Turn in requested items</text><text x="22" y="128" class="copy">Earn EXP and scrips</text></g>
+  <g transform="translate(888 145)"><rect class="box" width="264" height="180" rx="20"/><text x="22" y="44" class="head">4. Invest</text><text x="22" y="78" class="copy">Master recipe books</text><text x="22" y="103" class="copy">Regional folklore</text><text x="22" y="128" class="copy">Gear, materia, and materials</text></g>
+  <g transform="translate(510 375)"><circle cx="85" cy="45" r="42" fill="url(#coin)"/><text x="53" y="51" class="head">SCRIP</text></g>
+</svg>

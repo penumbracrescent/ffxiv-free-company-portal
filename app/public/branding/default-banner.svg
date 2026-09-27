@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" role="img" aria-labelledby="title" preserveAspectRatio="xMidYMid slice">
+  <title id="title">Free Company Portal banner</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#19052f"/><stop offset=".55" stop-color="#3b0764"/><stop offset="1" stop-color="#090014"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#e9d5ff" stop-opacity=".7"/><stop offset="1" stop-color="#9333ea" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1600" height="620" fill="url(#sky)"/>
+  <circle cx="1120" cy="150" r="250" fill="url(#glow)"/>
+  <path d="M0 520L220 350l150 118 190-210 170 170 180-240 220 262 170-145 320 225v90H0z" fill="#080010" opacity=".72"/>
+  <g fill="#e9d5ff" opacity=".7"><circle cx="180" cy="120" r="3"/><circle cx="420" cy="80" r="4"/><circle cx="760" cy="140" r="3"/><circle cx="1320" cy="90" r="4"/><circle cx="1460" cy="210" r="3"/></g>
+</svg>

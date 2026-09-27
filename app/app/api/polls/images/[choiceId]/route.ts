@@ -1,0 +1,9 @@
+import { Client } from "pg";
+import { auth } from "../../../../../auth";
+import { ensurePollTables } from "../../../../../lib/polls/schema";
+
+export const dynamic="force-dynamic";
+export async function GET(_request:Request,{params}:{params:Promise<{choiceId:string}>}){
+  const session=await auth() as any,discordUserId=String(session?.user?.discordUserId||"").trim(),groups=Array.isArray(session?.user?.groups)?session.user.groups:[],officer=groups.some((group:unknown)=>["admins","guild officers"].includes(String(group).toLowerCase()));if(!discordUserId&&!officer)return new Response("Sign in required",{status:401});const id=Number((await params).choiceId);if(!Number.isFinite(id))return new Response("Not found",{status:404});
+  const client=new Client({connectionString:process.env.DATABASE_URL});await client.connect();try{await ensurePollTables(client);if(!officer){const eligible=(await client.query(`select 1 from portal_discord_links dl join portal_characters c on c.id=dl.character_id join portal_discord_member_snapshots s on s.discord_user_id=dl.discord_user_id where dl.discord_user_id=$1 and c.active=true and c.fc_membership_status='current' and s.present_in_guild=true and exists(select 1 from portal_fc_verification verification where verification.id=1 and verification.status='verified') limit 1`,[discordUserId])).rowCount;if(!eligible)return new Response("Current FC membership required",{status:403});}const row=(await client.query(`select c.image_data,c.image_mime_type from portal_poll_choices c join portal_polls p on p.id=c.poll_id where c.id=$1 and c.image_data is not null and(p.is_test=false or $2::boolean) limit 1`,[id,officer])).rows[0];if(!row)return new Response("Not found",{status:404});return new Response(row.image_data,{headers:{"Content-Type":row.image_mime_type||"application/octet-stream","Cache-Control":"private, max-age=300"}});}finally{await client.end();}
+}

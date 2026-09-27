@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Free Company Portal</title>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c084fc"/><stop offset="1" stop-color="#581c87"/></linearGradient></defs>
+  <rect width="256" height="256" rx="52" fill="#0b0018"/>
+  <path d="M128 30l25 55 59 7-44 40 12 58-52-30-52 30 12-58-44-40 59-7z" fill="url(#g)"/>
+  <circle cx="128" cy="126" r="35" fill="#f3e8ff" opacity=".92"/>
+</svg>

@@ -1,0 +1,14 @@
+.env
+SETUP_TOKEN.txt
+*.local
+anime-schedule/secrets/
+/data/
+backups/*
+!backups/README.txt
+*.tar.gz
+postgres/
+Public Release/
+node_modules/
+.next/
+Thumbs.db
+.DS_Store

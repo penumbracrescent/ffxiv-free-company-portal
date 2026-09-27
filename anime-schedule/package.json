@@ -1,0 +1,16 @@
+{
+  "name": "ffxiv-free-company-anime-schedule",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "sync": "node src/cli.mjs sync",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

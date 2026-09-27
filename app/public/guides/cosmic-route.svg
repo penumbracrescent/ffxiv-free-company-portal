@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Cosmic Exploration destination and mission route</title>
+  <desc id="desc">A diagram showing the four Cosmic Exploration destinations and the repeating stellar mission loop.</desc>
+  <defs>
+    <radialGradient id="space"><stop stop-color="#391468"/><stop offset="1" stop-color="#090216"/></radialGradient>
+    <linearGradient id="planet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#82f2cf"/><stop offset=".55" stop-color="#8c7cff"/><stop offset="1" stop-color="#e48cd7"/></linearGradient>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L9 3L0 6Z" fill="#c995ff"/></marker>
+    <style>.h{font:800 24px system-ui,sans-serif;fill:white}.t{font:700 18px system-ui,sans-serif;fill:white}.c{font:14px system-ui,sans-serif;fill:#ddd0ee}.box{fill:#110421;stroke:#6d4d91;stroke-width:2}.ln{stroke:#c995ff;stroke-width:4;fill:none;marker-end:url(#a)}.loop{stroke:#82f2cf;stroke-width:4;fill:none;stroke-dasharray:9 7;marker-end:url(#a)}</style>
+  </defs>
+  <rect width="1200" height="520" rx="30" fill="url(#space)"/>
+  <circle cx="1080" cy="82" r="2" fill="white"/><circle cx="960" cy="45" r="3" fill="white"/><circle cx="780" cy="95" r="2" fill="white"/><circle cx="210" cy="72" r="2" fill="white"/><circle cx="520" cy="48" r="3" fill="white"/>
+  <text x="50" y="52" class="h">COSMIC EXPLORATION — DESTINATIONS &amp; REPEATABLE LOOP</text>
+  <g transform="translate(50 100)"><circle cx="90" cy="80" r="70" fill="url(#planet)"/><text x="26" y="75" class="t">Sinus Ardorum</text><text x="50" y="100" class="c">Namingway</text></g>
+  <path class="ln" d="M235 180H305"/>
+  <g transform="translate(315 100)"><circle cx="90" cy="80" r="70" fill="url(#planet)"/><text x="55" y="75" class="t">Phaenna</text><text x="42" y="100" class="c">Searchingway</text></g>
+  <path class="ln" d="M500 180H570"/>
+  <g transform="translate(580 100)"><circle cx="90" cy="80" r="70" fill="url(#planet)"/><text x="68" y="75" class="t">Oizys</text><text x="42" y="100" class="c">Searchingway</text></g>
+  <path class="ln" d="M765 180H835"/>
+  <g transform="translate(845 100)"><circle cx="90" cy="80" r="70" fill="url(#planet)"/><text x="55" y="75" class="t">Auxesia</text><text x="42" y="100" class="c">Tool mastery</text></g>
+
+  <g transform="translate(55 305)"><rect class="box" width="210" height="120" rx="18"/><text x="22" y="45" class="t">1. Accept</text><text x="22" y="75" class="c">Exotablet mission</text><text x="22" y="97" class="c">Read score &amp; timer</text></g>
+  <path class="loop" d="M265 365H330"/>
+  <g transform="translate(335 305)"><rect class="box" width="210" height="120" rx="18"/><text x="22" y="45" class="t">2. Produce</text><text x="22" y="75" class="c">Cosmic log / pouch</text><text x="22" y="97" class="c">or Stellar Reduction</text></g>
+  <path class="loop" d="M545 365H610"/>
+  <g transform="translate(615 305)"><rect class="box" width="210" height="120" rx="18"/><text x="22" y="45" class="t">3. Score</text><text x="22" y="75" class="c">Bronze → Silver → Gold</text><text x="22" y="97" class="c">Gold unlocks chains</text></g>
+  <path class="loop" d="M825 365H890"/>
+  <g transform="translate(895 305)"><rect class="box" width="250" height="120" rx="18"/><text x="22" y="45" class="t">4. Advance</text><text x="22" y="75" class="c">Class + tool + successes</text><text x="22" y="97" class="c">Projects / alerts / credits</text></g>
+  <path class="loop" d="M1020 425V480H160V425"/>
+</svg>

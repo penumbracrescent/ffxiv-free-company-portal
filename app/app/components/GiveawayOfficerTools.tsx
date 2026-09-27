@@ -1,0 +1,15 @@
+import type { GiveawayDashboard } from "../../lib/giveaways/types";
+import { archiveGiveawayTemplateAction, archivePrizeInventoryAction, createDraftFromTemplateAction, savePrizeInventoryAction } from "../../lib/giveaways/actions";
+
+const fmt=(value:string)=>new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(new Date(value));
+const label=(value:string)=>value.replaceAll("_"," ").replace(/\b\w/g,char=>char.toUpperCase());
+export default function GiveawayOfficerTools({dashboard}:{dashboard:GiveawayDashboard}){
+  return <section className="giveaway-officer-tools">
+    <details><summary><strong>Prize Inventory</strong><span>{dashboard.prizeInventory.length} reusable prize records</span></summary>
+      <form action={savePrizeInventoryAction} className="giveaway-tool-form"><input name="name" required placeholder="Prize name"/><input name="quantity" type="number" min="0" defaultValue="1"/><select name="category" defaultValue="in_game"><option value="in_game">In-game</option><option value="premium">Premium</option><option value="game_time">Game Time</option><option value="special">Special / Custom</option></select><input name="donor" placeholder="Donor (optional)"/><input name="notes" placeholder="Inventory notes"/><button className="button primary" type="submit">Add / Restock</button></form>
+      <div className="giveaway-tool-list">{dashboard.prizeInventory.map(item=><div key={item.id}><span><strong>{item.name}</strong><small>{item.quantityAvailable} available · {label(item.category)}{item.donor?` · Donated by ${item.donor}`:""}</small></span><form action={archivePrizeInventoryAction}><input type="hidden" name="id" value={item.id}/><button className="danger-button" type="submit">Archive</button></form></div>)}</div>
+    </details>
+    <details><summary><strong>Reusable Templates</strong><span>{dashboard.templates.length} saved setup templates</span></summary><div className="giveaway-tool-list">{dashboard.templates.length?dashboard.templates.map(item=><div key={item.id}><span><strong>{item.name}</strong><small>Create a fresh editable draft from this setup.</small></span><form action={createDraftFromTemplateAction}><input type="hidden" name="templateId" value={item.id}/><button className="button primary" type="submit">Create Draft</button></form><form action={archiveGiveawayTemplateAction}><input type="hidden" name="id" value={item.id}/><button className="danger-button" type="submit">Archive</button></form></div>):<p>No templates saved yet. Use an existing giveaway's officer controls to save one.</p>}</div></details>
+    <details><summary><strong>Audit History</strong><span>Latest {dashboard.audit.length} recorded actions</span></summary><div className="giveaway-audit-list">{dashboard.audit.map(entry=><div key={entry.id}><time>{fmt(entry.createdAt)}</time><strong>{label(entry.actionType)}</strong><span>{entry.giveawayTitle||"Giveaway system"}</span><small>{entry.actorLabel||"Automatic service"}</small></div>)}</div></details>
+  </section>;
+}

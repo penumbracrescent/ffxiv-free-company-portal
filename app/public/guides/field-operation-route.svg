@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Field operation progression map</title>
+  <desc id="desc">Original route chart for Eureka, Save the Queen, and Occult Crescent progression.</desc>
+  <rect width="1200" height="675" fill="#150523"/>
+  <path d="M120 338H1080" stroke="#9f63cf" stroke-width="8" stroke-linecap="round"/>
+  <g font-family="Arial,sans-serif" text-anchor="middle">
+    <g transform="translate(220 338)">
+      <circle r="105" fill="#351153" stroke="#f3c764" stroke-width="5"/>
+      <text y="-30" fill="#f8efff" font-size="27" font-weight="700">EUREKA</text>
+      <text y="5" fill="#d9cbe4" font-size="17">Elemental 1–60</text>
+      <text y="34" fill="#d9cbe4" font-size="17">Anemos → Hydatos</text>
+      <text y="63" fill="#ffcf71" font-size="16">Baldesion Arsenal</text>
+    </g>
+    <g transform="translate(600 338)">
+      <circle r="105" fill="#351153" stroke="#f3c764" stroke-width="5"/>
+      <text y="-30" fill="#f8efff" font-size="27" font-weight="700">BOZJA</text>
+      <text y="5" fill="#d9cbe4" font-size="17">Rank 1–25</text>
+      <text y="34" fill="#d9cbe4" font-size="17">Front → Zadnor</text>
+      <text y="63" fill="#ffcf71" font-size="16">3 large-scale duties</text>
+    </g>
+    <g transform="translate(980 338)">
+      <circle r="105" fill="#351153" stroke="#f3c764" stroke-width="5"/>
+      <text y="-30" fill="#f8efff" font-size="25" font-weight="700">CRESCENT</text>
+      <text y="5" fill="#d9cbe4" font-size="17">Knowledge 1–40</text>
+      <text y="34" fill="#d9cbe4" font-size="17">South → North Horn</text>
+      <text y="63" fill="#ffcf71" font-size="16">Forked Towers</text>
+    </g>
+    <text x="600" y="95" fill="#f8efff" font-size="34" font-weight="700">FIELD OPERATION PROGRESSION</text>
+    <text x="600" y="615" fill="#cbb9d8" font-size="18">Each system has separate levels, currencies, actions, death rules, and relic materials.</text>
+  </g>
+</svg>

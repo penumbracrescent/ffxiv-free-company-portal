@@ -1,0 +1,3 @@
+export function normalizeRank(rankChoice,votesAllowed){const rank=Number(rankChoice),allowed=Math.max(1,Math.min(3,Number(votesAllowed)||1));return Number.isInteger(rank)&&rank>=1&&rank<=allowed?rank:null;}
+export function rankedVotePoints(votesAllowed,rankChoice){const allowed=Math.max(1,Math.min(3,Number(votesAllowed)||1)),rank=normalizeRank(rankChoice,allowed);return rank?allowed-rank+1:0;}
+export function expiredClaimOutcome({kind,hasAlternate,closesAt,now=Date.now()}){if(kind==='fcfs')return !closesAt||new Date(closesAt).getTime()>now?'reopen':'complete';return hasAlternate?'promote':'forfeit';}

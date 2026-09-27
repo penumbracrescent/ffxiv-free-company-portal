@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Relic weapon stage route</title>
+  <desc id="desc">Original visual comparing the major progression structure of Anima, Eureka, Resistance, Manderville, and Phantom weapons.</desc>
+  <rect width="1200" height="675" fill="#160525"/>
+  <text x="55" y="70" fill="#f8efff" font-family="Arial,sans-serif" font-size="34" font-weight="700">RELIC ROUTES AFTER ZODIAC</text>
+  <g font-family="Arial,sans-serif" font-size="17">
+    <g transform="translate(55 115)">
+      <rect width="1090" height="82" rx="18" fill="#32104e" stroke="#9453c5"/>
+      <text x="22" y="32" fill="#ffce6c" font-weight="700">ANIMA · Lv 60</text>
+      <text x="22" y="59" fill="#eee4f5">Crystals → dungeons → unidentified sets → oils → sand/stats → light → clusters → Lux</text>
+    </g>
+    <g transform="translate(55 212)">
+      <rect width="1090" height="82" rx="18" fill="#32104e" stroke="#9453c5"/>
+      <text x="22" y="32" fill="#ffce6c" font-weight="700">EUREKA · Lv 70</text>
+      <text x="22" y="59" fill="#eee4f5">Anemos crystals → Pagos kettle → Pyros Logos → Hydatos scales → Arsenal fragments</text>
+    </g>
+    <g transform="translate(55 309)">
+      <rect width="1090" height="82" rx="18" fill="#32104e" stroke="#9453c5"/>
+      <text x="22" y="32" fill="#ffce6c" font-weight="700">RESISTANCE · Lv 80</text>
+      <text x="22" y="59" fill="#eee4f5">Scalepowder → memories → Recollection → raids → artifacts → Zadnor → Blade's</text>
+    </g>
+    <g transform="translate(55 406)">
+      <rect width="1090" height="82" rx="18" fill="#32104e" stroke="#9453c5"/>
+      <text x="22" y="32" fill="#ffce6c" font-weight="700">MANDERVILLE · Lv 90</text>
+      <text x="22" y="59" fill="#eee4f5">Hildibrand story gate → four 1,500-Poetics exchanges → final stat choice</text>
+    </g>
+    <g transform="translate(55 503)">
+      <rect width="1090" height="82" rx="18" fill="#32104e" stroke="#9453c5"/>
+      <text x="22" y="32" fill="#ffce6c" font-weight="700">PHANTOM · Lv 100</text>
+      <text x="22" y="59" fill="#eee4f5">Village unlock → paste → demiatma → South/North Horn objectives → current patch stage</text>
+    </g>
+    <text x="55" y="630" fill="#cbb9d8">Open the matching collection for exact quests, quantities, alternate sources, and hand-in rules.</text>
+  </g>
+</svg>

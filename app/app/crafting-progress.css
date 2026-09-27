@@ -1,0 +1,24 @@
+.crafting-solver-progress {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--tile-surface-deep);
+}
+
+.crafting-solver-progress > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.crafting-solver-progress progress {
+  width: 100%;
+  height: 14px;
+  accent-color: var(--purple-soft);
+}
+
+.crafting-solver-progress small {
+  color: var(--muted);
+}

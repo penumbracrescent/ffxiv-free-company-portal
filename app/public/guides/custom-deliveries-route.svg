@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Custom Deliveries weekly planning route</title>
+  <desc id="desc">A weekly planner showing twelve allowances split into two groups of six, followed by satisfaction and reward choices.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#170323"/><stop offset="1" stop-color="#3c1266"/></linearGradient>
+    <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8fcf"/><stop offset="1" stop-color="#a767ff"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L9 3L0 6Z" fill="#d4a5ff"/></marker>
+    <style>.title{font:800 25px system-ui,sans-serif;fill:#fff}.head{font:750 19px system-ui,sans-serif;fill:#fff}.copy{font:14px system-ui,sans-serif;fill:#eadcf4}.box{fill:#0d0318;stroke:#7c569f;stroke-width:2}.path{stroke:#d4a5ff;stroke-width:4;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1200" height="520" rx="30" fill="url(#bg)"/>
+  <text x="48" y="58" class="title">CUSTOM DELIVERIES — PLAN TWELVE WEEKLY ALLOWANCES</text>
+  <path class="path" d="M280 230H345M570 230H635M860 230H925"/>
+  <g transform="translate(48 135)"><rect class="box" width="232" height="190" rx="20"/><text x="22" y="46" class="head">1. Check Timers</text><text x="22" y="82" class="copy">Requests and bonuses</text><text x="22" y="108" class="copy">Client satisfaction</text><text x="22" y="134" class="copy">Allowances remaining</text></g>
+  <g transform="translate(338 135)"><rect class="box" width="232" height="190" rx="20"/><text x="22" y="46" class="head">2. Choose two</text><text x="22" y="82" class="copy">Up to 6 per client</text><text x="22" y="108" class="copy">12 total each week</text><text x="22" y="134" class="copy">Mix disciplines freely</text></g>
+  <g transform="translate(628 135)"><rect class="box" width="232" height="190" rx="20"/><text x="22" y="46" class="head">3. Deliver</text><text x="22" y="82" class="copy">Reach reward tier</text><text x="22" y="108" class="copy">Earn EXP and scrips</text><text x="22" y="134" class="copy">Advance the story</text></g>
+  <g transform="translate(918 135)"><rect class="box" width="234" height="190" rx="20"/><text x="22" y="46" class="head">4. Rank up</text><text x="22" y="82" class="copy">Five satisfaction ranks</text><text x="22" y="108" class="copy">Four-week minimum</text><text x="22" y="134" class="copy">Glamour and titles</text></g>
+  <path d="M600 375C565 340 500 372 600 458C700 372 635 340 600 375Z" fill="url(#heart)"/>
+</svg>

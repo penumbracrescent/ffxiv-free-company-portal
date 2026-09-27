@@ -1,0 +1,325 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - portal_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  restore:
+    build:
+      context: .
+      dockerfile: restore-service/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SETUP_MODE: ${SETUP_MODE:-false}
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+    volumes:
+      - ./data/setup:/setup-output
+      - ./data:/target-data
+      - ./backups:/backups:ro
+    security_opt:
+      - no-new-privileges:true
+
+  backup:
+    build:
+      context: ./backup-service
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      BACKUP_DIR: /backups
+      SOURCE_DIR: /source
+      SETUP_MODE: ${SETUP_MODE:-false}
+    volumes:
+      - ./.env:/source/installation.env:ro
+      - ./compose.yaml:/source/installation-compose.yaml:ro
+      - ./data:/source/data:ro
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d \"$${DATABASE_URL}\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  schedule:
+    command: ["node", "-e", "if(process.env.SETUP_MODE==='true'){console.log('Setup mode: scheduler paused');setInterval(()=>{},60000)}else{import('./src/index.mjs')}"]
+    build:
+      context: ./anime-schedule
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    dns:
+      - ${DOCKER_DNS_PRIMARY:-8.8.8.8}
+      - ${DOCKER_DNS_SECONDARY:-8.8.4.4}
+    environment:
+      NODE_ENV: production
+      SETUP_MODE: ${SETUP_MODE:-false}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ANIME_SERVICE_API_TOKEN: ${ANIME_SERVICE_API_TOKEN}
+      ANIME_SCHEDULE_TOKEN: ${ANIME_SCHEDULE_TOKEN}
+      ANIME_SCHEDULE_TOKEN_FILE: ${ANIME_SCHEDULE_TOKEN_FILE:-/run/anime-secrets/anime-schedule-token}
+      ANIME_OFFICIAL_FEED_URLS: ${ANIME_OFFICIAL_FEED_URLS}
+      ANIME_TIMEZONE: ${ANIME_TIMEZONE:-America/Chicago}
+      ANIME_DAILY_SYNC_TIME: ${ANIME_DAILY_SYNC_TIME:-04:15}
+      ANIME_GOOGLE_ENABLED: ${ANIME_GOOGLE_ENABLED:-false}
+      ANIME_GOOGLE_DRY_RUN: ${ANIME_GOOGLE_DRY_RUN:-true}
+      ANIME_GOOGLE_LANGUAGES: ${ANIME_GOOGLE_LANGUAGES:-sub,dub}
+      ANIME_GOOGLE_SUB_CALENDAR_ID: ${ANIME_GOOGLE_SUB_CALENDAR_ID}
+      ANIME_GOOGLE_DUB_CALENDAR_ID: ${ANIME_GOOGLE_DUB_CALENDAR_ID}
+      ANIME_GOOGLE_CREDENTIALS_FILE: ${ANIME_GOOGLE_CREDENTIALS_FILE:-/run/anime-secrets/google-service-account.json}
+      ANIME_DISCORD_ENABLED: ${ANIME_DISCORD_ENABLED:-false}
+      ANIME_DISCORD_LANGUAGES: ${ANIME_DISCORD_LANGUAGES:-sub,dub}
+      ANIME_DISCORD_HORIZON_DAYS: ${ANIME_DISCORD_HORIZON_DAYS:-3}
+    volumes:
+      - ./data/anime:/run/anime-secrets
+    healthcheck:
+      test: ["CMD", "node", "-e", "if(process.env.SETUP_MODE==='true')process.exit(0);fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  portal:
+    build:
+      context: ./app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      restore:
+        condition: service_started
+    dns:
+      - ${DOCKER_DNS_PRIMARY:-8.8.8.8}
+      - ${DOCKER_DNS_SECONDARY:-8.8.4.4}
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SETUP_MODE: ${SETUP_MODE:-false}
+      SETUP_TOKEN: ${SETUP_TOKEN:-}
+      ACCESS_MODE: ${ACCESS_MODE:-local}
+
+      PORTAL_NAME: ${PORTAL_NAME}
+      PORTAL_SUBTITLE: ${PORTAL_SUBTITLE:-Free Company Portal}
+      PORTAL_URL: ${PORTAL_URL}
+      PORTAL_LOGO_URL: ${PORTAL_LOGO_URL:-/branding/default-logo.svg}
+      PORTAL_BANNER_URL: ${PORTAL_BANNER_URL:-/branding/default-banner.svg}
+      PORTAL_BACKGROUND_COLOR: "${PORTAL_BACKGROUND_COLOR:-#05000c}"
+      PORTAL_ACCENT_COLOR: "${PORTAL_ACCENT_COLOR:-#9333ea}"
+      PORTAL_TILE_COLOR: "${PORTAL_TILE_COLOR:-#120423}"
+      PORTAL_OPERATOR_NAME: ${PORTAL_OPERATOR_NAME:-}
+      PORTAL_PRIVACY_CONTACT: ${PORTAL_PRIVACY_CONTACT:-}
+      PORTAL_OPERATOR_REGION: ${PORTAL_OPERATOR_REGION:-}
+      PORTAL_FORMER_MEMBER_RETENTION_DAYS: ${PORTAL_FORMER_MEMBER_RETENTION_DAYS:-30}
+      PORTAL_ACTIVITY_RETENTION_DAYS: ${PORTAL_ACTIVITY_RETENTION_DAYS:-365}
+      PORTAL_BACKUP_RETENTION_DAYS: ${PORTAL_BACKUP_RETENTION_DAYS:-90}
+      PORTAL_PRIVACY_ADDITIONAL_NOTICE: ${PORTAL_PRIVACY_ADDITIONAL_NOTICE:-}
+      DEFAULT_WORLD: ${DEFAULT_WORLD}
+      DEFAULT_DATACENTER: ${DEFAULT_DATACENTER}
+      FC_LODESTONE_URL: ${FC_LODESTONE_URL}
+
+      AUTH_SECRET: ${AUTH_SECRET}
+      PRIVACY_SUPPRESSION_SECRET: ${PRIVACY_SUPPRESSION_SECRET:-${AUTH_SECRET}}
+      AUTH_URL: ${AUTH_URL}
+      AUTH_TRUST_HOST: ${AUTH_TRUST_HOST}
+      AUTH_PROVIDER: ${AUTH_PROVIDER:-discord}
+      AUTH_DISCORD_ID: ${AUTH_DISCORD_ID}
+      AUTH_DISCORD_SECRET: ${AUTH_DISCORD_SECRET}
+      AUTH_AUTHENTIK_ID: ${AUTH_AUTHENTIK_ID}
+      AUTH_AUTHENTIK_SECRET: ${AUTH_AUTHENTIK_SECRET}
+      AUTH_AUTHENTIK_ISSUER: ${AUTH_AUTHENTIK_ISSUER}
+      PORTAL_ADMIN_DISCORD_IDS: ${PORTAL_ADMIN_DISCORD_IDS}
+      PORTAL_PRIMARY_ADMIN_DISCORD_ID: ${PORTAL_PRIMARY_ADMIN_DISCORD_ID:-}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_APPLICATION_ID: ${DISCORD_APPLICATION_ID}
+      DISCORD_MOUNT_WEBHOOK_URL: ${DISCORD_MOUNT_WEBHOOK_URL}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      DISCORD_VERIFIED_ROLE_ID: ${DISCORD_VERIFIED_ROLE_ID}
+      DISCORD_UNVERIFIED_ROLE_ID: ${DISCORD_UNVERIFIED_ROLE_ID}
+      DISCORD_TEMP_ACCESS_ROLE_ID: ${DISCORD_TEMP_ACCESS_ROLE_ID}
+      DISCORD_TEMP_GUEST_ENABLED: ${DISCORD_TEMP_GUEST_ENABLED:-false}
+      DISCORD_TEMP_GUEST_HOURS: ${DISCORD_TEMP_GUEST_HOURS:-6}
+      DISCORD_WELCOME_CHANNEL_ID: ${DISCORD_WELCOME_CHANNEL_ID}
+      DISCORD_FREE_COMPANY_CHAT_CHANNEL_ID: ${DISCORD_FREE_COMPANY_CHAT_CHANNEL_ID}
+      DISCORD_WELCOME_ENGAGEMENT_ENABLED: ${DISCORD_WELCOME_ENGAGEMENT_ENABLED:-false}
+      DISCORD_OFFICER_LOG_CHANNEL_ID: ${DISCORD_OFFICER_LOG_CHANNEL_ID}
+      DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID}
+      DISCORD_RAID_CHANNEL_ID: ${DISCORD_RAID_CHANNEL_ID}
+      DISCORD_MOUNT_FARM_CHANNEL_ID: ${DISCORD_MOUNT_FARM_CHANNEL_ID}
+      DISCORD_MOUNT_WIN_CHANNEL_ID: ${DISCORD_MOUNT_WIN_CHANNEL_ID}
+      DISCORD_TEST_CHANNEL_ID: ${DISCORD_TEST_CHANNEL_ID}
+      DISCORD_WELCOME_WAVE_STICKER_IDS: ${DISCORD_WELCOME_WAVE_STICKER_IDS}
+      DISCORD_COMMAND_NAME: ${DISCORD_COMMAND_NAME:-fc}
+      TAILSCALE_HOSTNAME: ${TAILSCALE_HOSTNAME}
+      TAILSCALE_TAILNET: ${TAILSCALE_TAILNET}
+      TAILSCALE_AUTHKEY: ${TAILSCALE_AUTHKEY}
+      CLOUDFLARE_HOSTNAME: ${CLOUDFLARE_HOSTNAME}
+      CLOUDFLARE_TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+      ANIME_TIMEZONE: ${ANIME_TIMEZONE:-America/Chicago}
+      ANIME_SCHEDULE_URL: http://schedule:8080
+      ANIME_SERVICE_API_TOKEN: ${ANIME_SERVICE_API_TOKEN}
+      ANIME_GOOGLE_SUB_CALENDAR_ID: ${ANIME_GOOGLE_SUB_CALENDAR_ID}
+      ANIME_GOOGLE_DUB_CALENDAR_ID: ${ANIME_GOOGLE_DUB_CALENDAR_ID}
+    ports:
+      - "${PORTAL_PORT:-9030}:3000"
+    volumes:
+      - ./data/branding:/app/public/uploads
+      - ./data/setup:/setup-output
+      - ./data/fc-verification:/fc-verification
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  tailscale:
+    image: tailscale/tailscale:stable
+    restart: always
+    depends_on:
+      portal:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "/bootstrap/start.sh"]
+    dns:
+      - ${DOCKER_DNS_PRIMARY:-8.8.8.8}
+      - ${DOCKER_DNS_SECONDARY:-8.8.4.4}
+    environment:
+      ACCESS_MODE: ${ACCESS_MODE:-local}
+      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+      TS_AUTH_ONCE: "true"
+      TS_HOSTNAME: ${TAILSCALE_HOSTNAME:-fc-portal}
+      TAILSCALE_TAILNET: ${TAILSCALE_TAILNET:-}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_SERVE_CONFIG: /config/serve.json
+      TS_USERSPACE: "true"
+    volumes:
+      - ./data/tailscale/state:/var/lib/tailscale
+      - ./data/tailscale/config:/config
+      - ./tailscale/start.sh:/bootstrap/start.sh:ro
+
+  cloudflare:
+    image: cloudflare/cloudflared:latest
+    profiles: ["cloudflare"]
+    restart: always
+    depends_on:
+      portal:
+        condition: service_healthy
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel --no-autoupdate run
+
+  worker:
+    command: ["node", "-e", "if(process.env.SETUP_MODE==='true'){console.log('Setup mode: worker paused');setInterval(()=>{},60000)}else{import('./worker.mjs')}"]
+    build:
+      context: ./worker
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      portal:
+        condition: service_healthy
+    dns:
+      - ${DOCKER_DNS_PRIMARY:-8.8.8.8}
+      - ${DOCKER_DNS_SECONDARY:-8.8.4.4}
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AUTH_SECRET: ${AUTH_SECRET}
+      PRIVACY_SUPPRESSION_SECRET: ${PRIVACY_SUPPRESSION_SECRET:-${AUTH_SECRET}}
+      PORTAL_NAME: ${PORTAL_NAME}
+      FC_LODESTONE_URL: ${FC_LODESTONE_URL}
+      SETUP_MODE: ${SETUP_MODE:-false}
+      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES}
+      DEFAULT_WORLD: ${DEFAULT_WORLD}
+      DEFAULT_DATACENTER: ${DEFAULT_DATACENTER}
+      DISCORD_MOUNT_WEBHOOK_URL: ${DISCORD_MOUNT_WEBHOOK_URL}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      FC_VERIFICATION_SEAL_PATH: /fc-verification/identity.json
+      MAX_FC_PAGES: ${MAX_FC_PAGES}
+      MAX_MOUNT_SYNC_CHARACTERS: ${MAX_MOUNT_SYNC_CHARACTERS}
+      MOUNT_SYNC_REQUEST_DELAY_MS: ${MOUNT_SYNC_REQUEST_DELAY_MS}
+      MAX_PORTRAIT_SYNC_CHARACTERS: ${MAX_PORTRAIT_SYNC_CHARACTERS}
+      PORTRAIT_SYNC_REQUEST_DELAY_MS: ${PORTRAIT_SYNC_REQUEST_DELAY_MS}
+    volumes:
+      - ./data/fc-verification:/fc-verification
+
+  bot:
+    command: ["node", "-e", "if(process.env.SETUP_MODE==='true'){console.log('Setup mode: bot paused');setInterval(()=>{},60000)}else{import('./bot.mjs')}"]
+    build:
+      context: ./bot
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      portal:
+        condition: service_healthy
+      schedule:
+        condition: service_healthy
+    dns:
+      - ${DOCKER_DNS_PRIMARY:-8.8.8.8}
+      - ${DOCKER_DNS_SECONDARY:-8.8.4.4}
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AUTH_SECRET: ${AUTH_SECRET}
+      PRIVACY_SUPPRESSION_SECRET: ${PRIVACY_SUPPRESSION_SECRET:-${AUTH_SECRET}}
+      PORTAL_NAME: ${PORTAL_NAME}
+      PORTAL_URL: ${PORTAL_URL}
+      PORTAL_ACCENT_COLOR: "${PORTAL_ACCENT_COLOR:-#9333ea}"
+      DISCORD_COMMAND_NAME: ${DISCORD_COMMAND_NAME:-fc}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      PORTAL_ADMIN_DISCORD_IDS: ${PORTAL_ADMIN_DISCORD_IDS}
+      PORTAL_PRIMARY_ADMIN_DISCORD_ID: ${PORTAL_PRIMARY_ADMIN_DISCORD_ID:-}
+      DISCORD_APPLICATION_ID: ${DISCORD_APPLICATION_ID}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      DISCORD_VERIFIED_ROLE_ID: ${DISCORD_VERIFIED_ROLE_ID}
+      DISCORD_UNVERIFIED_ROLE_ID: ${DISCORD_UNVERIFIED_ROLE_ID}
+      DISCORD_TEMP_ACCESS_ROLE_ID: ${DISCORD_TEMP_ACCESS_ROLE_ID}
+      DISCORD_TEMP_GUEST_ENABLED: ${DISCORD_TEMP_GUEST_ENABLED:-false}
+      DISCORD_TEMP_GUEST_HOURS: ${DISCORD_TEMP_GUEST_HOURS:-6}
+      DISCORD_WELCOME_CHANNEL_ID: ${DISCORD_WELCOME_CHANNEL_ID}
+      DISCORD_FREE_COMPANY_CHAT_CHANNEL_ID: ${DISCORD_FREE_COMPANY_CHAT_CHANNEL_ID}
+      DISCORD_WELCOME_ENGAGEMENT_ENABLED: ${DISCORD_WELCOME_ENGAGEMENT_ENABLED:-false}
+      DISCORD_OFFICER_LOG_CHANNEL_ID: ${DISCORD_OFFICER_LOG_CHANNEL_ID}
+      DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID}
+      DISCORD_RAID_CHANNEL_ID: ${DISCORD_RAID_CHANNEL_ID}
+      DISCORD_MOUNT_FARM_CHANNEL_ID: ${DISCORD_MOUNT_FARM_CHANNEL_ID}
+      DISCORD_MOUNT_WIN_CHANNEL_ID: ${DISCORD_MOUNT_WIN_CHANNEL_ID}
+      DISCORD_TEST_CHANNEL_ID: ${DISCORD_TEST_CHANNEL_ID}
+      DISCORD_WELCOME_WAVE_STICKER_IDS: ${DISCORD_WELCOME_WAVE_STICKER_IDS}
+      RUN_STARTUP_MEMBER_SYNC: ${RUN_STARTUP_MEMBER_SYNC}
+      SETUP_MODE: ${SETUP_MODE:-false}
+      ANIME_SCHEDULE_URL: http://schedule:8080
+      ANIME_SERVICE_API_TOKEN: ${ANIME_SERVICE_API_TOKEN}
+      ANIME_TIMEZONE: ${ANIME_TIMEZONE:-America/Chicago}
+      ANIME_DISCORD_ENABLED: ${ANIME_DISCORD_ENABLED:-false}
+      ANIME_DISCORD_HORIZON_DAYS: ${ANIME_DISCORD_HORIZON_DAYS:-3}
+
+volumes:
+  portal_postgres_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${DOCKER_NETWORK_SUBNET:-172.30.60.0/24}

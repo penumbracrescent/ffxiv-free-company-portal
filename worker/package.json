@@ -1,0 +1,16 @@
+{
+  "name": "ffxiv-free-company-sync-worker",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "type": "module",
+  "scripts": {
+    "start": "node worker.mjs",
+    "test": "node --test achievement-collections.test.mjs fc-verification.test.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "pg": "^8.13.1"
+  }
+}

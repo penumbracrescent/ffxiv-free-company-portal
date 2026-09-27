@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Ishgardian Restoration route</title>
+  <desc id="desc">A route diagram from the Foundation unlock through Diadem gathering, appraisal, Firmament crafting, turn-in, and rewards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#160528"/><stop offset="1" stop-color="#32105a"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#7cf7b4"/><stop offset="1" stop-color="#d58cff"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L9 3L0 6Z" fill="#d58cff"/></marker>
+    <style>
+      .card{fill:#10031f;stroke:#72528f;stroke-width:2}.head{font:700 22px system-ui,sans-serif;fill:#fff}.copy{font:15px system-ui,sans-serif;fill:#d8cce4}.small{font:13px system-ui,sans-serif;fill:#b8a8c9}.step{font:800 17px system-ui,sans-serif;fill:#0e0520}.line{fill:none;stroke:#d58cff;stroke-width:4;marker-end:url(#arrow)}.route{fill:none;stroke:#7cf7b4;stroke-width:4;stroke-dasharray:9 8}
+    </style>
+  </defs>
+  <rect width="1200" height="520" rx="30" fill="url(#bg)"/>
+  <text x="50" y="52" class="head">ISHGARDIAN RESTORATION — COMPLETE WORK LOOP</text>
+  <text x="50" y="80" class="copy">The raw Diadem item and the approved crafting material are different inventory states.</text>
+
+  <g transform="translate(50 120)">
+    <rect class="card" width="205" height="125" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">1</text>
+    <text x="20" y="70" class="head">Unlock</text><text x="20" y="96" class="copy">Recruitment Notice</text><text x="20" y="117" class="small">Foundation → Firmament</text>
+  </g>
+  <path class="line" d="M255 182H310"/>
+  <g transform="translate(315 120)">
+    <rect class="card" width="205" height="125" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">2</text>
+    <text x="20" y="70" class="head">Enter Diadem</text><text x="20" y="96" class="copy">Aurvael (10.8, 14.0)</text><text x="20" y="117" class="small">Level 10+ gatherer</text>
+  </g>
+  <path class="line" d="M520 182H575"/>
+  <g transform="translate(580 120)">
+    <rect class="card" width="250" height="125" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">3</text>
+    <text x="20" y="70" class="head">Gather the circuit</text><text x="20" y="96" class="copy">Miner clockwise</text><text x="20" y="117" class="small">Botanist counter-clockwise</text>
+  </g>
+  <path class="line" d="M830 182H885"/>
+  <g transform="translate(890 120)">
+    <rect class="card" width="260" height="125" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">4</text>
+    <text x="20" y="70" class="head">Appraise</text><text x="20" y="96" class="copy">Flotpassant (10.8, 14.0)</text><text x="20" y="117" class="small">Raw → Approved + scrips</text>
+  </g>
+
+  <path class="line" d="M1020 245V295H890"/>
+  <g transform="translate(740 300)">
+    <rect class="card" width="410" height="145" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">5</text>
+    <text x="20" y="72" class="head">Craft the matching tier</text><text x="20" y="100" class="copy">Special Recipes → Ishgard Restoration</text><text x="20" y="124" class="small">Quality becomes collectability; test one before batching.</text>
+  </g>
+  <path class="line" d="M740 372H665"/>
+  <g transform="translate(390 300)">
+    <rect class="card" width="270" height="145" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">6</text>
+    <text x="20" y="72" class="head">Submit to Potkin</text><text x="20" y="100" class="copy">(12.2, 14.6)</text><text x="20" y="124" class="small">XP + scrips + score + stamps</text>
+  </g>
+  <path class="line" d="M390 372H315"/>
+  <g transform="translate(50 300)">
+    <rect class="card" width="260" height="145" rx="18"/><circle cx="28" cy="28" r="17" fill="url(#accent)"/><text x="23" y="34" class="step">7</text>
+    <text x="20" y="72" class="head">Spend &amp; repeat</text><text x="20" y="100" class="copy">Enie / Lizbeth / Fêtes</text><text x="20" y="124" class="small">Recheck gear at each level band</text>
+  </g>
+  <path class="route" d="M180 445V485H1020V445"/>
+</svg>

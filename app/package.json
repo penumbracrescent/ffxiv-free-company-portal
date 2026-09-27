@@ -1,0 +1,28 @@
+{
+  "name": "ffxiv-free-company-portal",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "build": "next build",
+    "start": "next start",
+    "dev": "next dev",
+    "test": "node --test polls-events.test.mjs alt-character-claims.test.mjs schema-order.test.mjs guide-library.test.mjs migration-backup.test.mjs reboot-resilience.test.mjs browser-restore.test.mjs portal-branding.test.mjs setup-location.test.mjs mount-character-details.test.mjs mount-tracker-layout.test.mjs achievement-title-collections.test.mjs privacy-self-service.test.mjs mount-win-announcements.test.mjs anime-discord-events.test.mjs crafting-calculator.test.mjs officer-interactions.test.mjs availability.test.mjs responsive-navigation.test.mjs"
+  },
+  "dependencies": {
+    "@ffxiv-teamcraft/simulator": "3.7.3",
+    "next": "16.3.3",
+    "next-auth": "beta",
+    "pg": "^8.13.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.7.2"
+  }
+}

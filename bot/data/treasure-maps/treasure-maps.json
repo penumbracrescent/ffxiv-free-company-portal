@@ -1,0 +1,2713 @@
+{
+  "mapLevels": [
+    {
+      "id": "g1",
+      "name": "G1 鞣革地圖",
+      "minLevel": 20
+    },
+    {
+      "id": "g2",
+      "name": "G2 山羊革地圖",
+      "minLevel": 25
+    },
+    {
+      "id": "g3",
+      "name": "G3 巨蟾蜍革地圖",
+      "minLevel": 30
+    },
+    {
+      "id": "g4",
+      "name": "G4 野豬革地圖",
+      "minLevel": 35
+    },
+    {
+      "id": "g5",
+      "name": "G5 毒蜥蜴革地圖",
+      "minLevel": 40
+    },
+    {
+      "id": "g6",
+      "name": "G6 古鳥革地圖",
+      "minLevel": 45
+    },
+    {
+      "id": "g7",
+      "name": "G7 飛龍革地圖",
+      "minLevel": 50
+    },
+    {
+      "id": "g8",
+      "name": "G8 巨龍革地圖",
+      "minLevel": 50
+    },
+    {
+      "id": "g9",
+      "name": "G9 迦迦納怪鳥革地圖",
+      "minLevel": 55
+    },
+    {
+      "id": "g10",
+      "name": "G10 瞪羚革地圖",
+      "minLevel": 60
+    },
+    {
+      "id": "g11",
+      "name": "G11 綠飄龍革地圖",
+      "minLevel": 60
+    },
+    {
+      "id": "g12",
+      "name": "G12 纏尾蛟革地圖",
+      "minLevel": 70
+    },
+    {
+      "id": "g13",
+      "name": "G13 賽加羚羊革地圖",
+      "minLevel": 70
+    },
+    {
+      "id": "g14",
+      "name": "G14 金毗羅鱷革地圖",
+      "minLevel": 80
+    },
+    {
+      "id": "g15",
+      "name": "G15 蛇牛革地圖",
+      "minLevel": 80
+    },
+    {
+      "id": "g16",
+      "name": "G16 銀狼革地圖",
+      "minLevel": 90
+    },
+    {
+      "id": "g17",
+      "name": "G17 獰豹革地圖",
+      "minLevel": 90
+    },
+    {
+      "id": "g18",
+      "name": "G18 巨獸革地圖",
+      "minLevel": 100
+    }
+  ],
+  "zones": [
+    {
+      "id": "la_noscea",
+      "name": "拉諾西亞",
+      "subZones": [
+        "Middle La Noscea",
+        "Lower La Noscea",
+        "Eastern La Noscea",
+        "Western La Noscea",
+        "Upper La Noscea",
+        "Outer La Noscea"
+      ]
+    },
+    {
+      "id": "the_black_shroud",
+      "name": "黑衣森林",
+      "subZones": [
+        "Central Shroud",
+        "East Shroud",
+        "South Shroud",
+        "North Shroud"
+      ]
+    },
+    {
+      "id": "thanalan",
+      "name": "薩納蘭",
+      "subZones": [
+        "Central Thanalan",
+        "Western Thanalan",
+        "Eastern Thanalan",
+        "Southern Thanalan",
+        "Northern Thanalan"
+      ]
+    },
+    {
+      "id": "coerthas",
+      "name": "庫爾札斯",
+      "subZones": [
+        "Coerthas Central Highlands",
+        "Coerthas Western Highlands"
+      ]
+    },
+    {
+      "id": "mor_dhona",
+      "name": "摩杜納",
+      "subZones": [
+        "Mor Dhona"
+      ]
+    },
+    {
+      "id": "abalathia",
+      "name": "阿巴拉提亞",
+      "subZones": [
+        "The Sea of Clouds",
+        "Azys Lla"
+      ]
+    },
+    {
+      "id": "dravania",
+      "name": "龍堡",
+      "subZones": [
+        "The Dravanian Forelands",
+        "The Dravanian Hinterlands",
+        "The Churning Mists"
+      ]
+    },
+    {
+      "id": "gyr_abania",
+      "name": "基拉巴尼亞",
+      "subZones": [
+        "The Fringes",
+        "The Peaks",
+        "The Lochs"
+      ]
+    },
+    {
+      "id": "othard",
+      "name": "東方地區",
+      "subZones": [
+        "The Ruby Sea",
+        "Yanxia",
+        "The Azim Steppe"
+      ]
+    },
+    {
+      "id": "norvrandt",
+      "name": "諾弗蘭特",
+      "subZones": [
+        "Lakeland",
+        "Kholusia",
+        "Amh Araeng",
+        "Il Mheg",
+        "The Rak'tika Greatwood",
+        "The Tempest"
+      ]
+    },
+    {
+      "id": "ilsabard",
+      "name": "伊爾薩巴德",
+      "subZones": [
+        "Labyrinthos",
+        "Thavnair",
+        "Garlemald",
+        "Mare Lamentorum",
+        "Elpis",
+        "Ultima Thule"
+      ]
+    },
+    {
+      "id": "tural",
+      "name": "圖拉利亞",
+      "subZones": [
+        "Urqopacha",
+        "Kozama'uka",
+        "Yak T'el",
+        "Shaaloani",
+        "Heritage Found"
+      ]
+    }
+  ],
+  "maps": [
+    {
+      "id": "tm_007",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 1,
+      "coords": {
+        "x": 13.7,
+        "y": 14.2,
+        "z": 1.7
+      }
+    },
+    {
+      "id": "tm_008",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 2,
+      "coords": {
+        "x": 17,
+        "y": 23.3,
+        "z": 2.8
+      }
+    },
+    {
+      "id": "tm_009",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 3,
+      "coords": {
+        "x": 15.8,
+        "y": 30.6,
+        "z": 2.9
+      }
+    },
+    {
+      "id": "tm_010",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 4,
+      "coords": {
+        "x": 21.6,
+        "y": 23.9,
+        "z": 2.3
+      }
+    },
+    {
+      "id": "tm_011",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 5,
+      "coords": {
+        "x": 21.6,
+        "y": 26,
+        "z": 2.4
+      }
+    },
+    {
+      "id": "tm_012",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 6,
+      "coords": {
+        "x": 29,
+        "y": 24,
+        "z": 2.8
+      }
+    },
+    {
+      "id": "tm_013",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 7,
+      "coords": {
+        "x": 34.1,
+        "y": 29,
+        "z": 3.4
+      }
+    },
+    {
+      "id": "tm_014",
+      "level": "g17",
+      "zoneId": "urqopacha",
+      "index": 8,
+      "coords": {
+        "x": 34.2,
+        "y": 32.5,
+        "z": 3.3
+      }
+    },
+    {
+      "id": "tm_015",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 1,
+      "coords": {
+        "x": 6.8,
+        "y": 19.4,
+        "z": 0.6
+      }
+    },
+    {
+      "id": "tm_016",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 2,
+      "coords": {
+        "x": 9,
+        "y": 33.9,
+        "z": 1.3
+      }
+    },
+    {
+      "id": "tm_017",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 3,
+      "coords": {
+        "x": 20,
+        "y": 6.9,
+        "z": 0.2
+      }
+    },
+    {
+      "id": "tm_018",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 4,
+      "coords": {
+        "x": 18.9,
+        "y": 22.5,
+        "z": 1.1
+      }
+    },
+    {
+      "id": "tm_019",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 5,
+      "coords": {
+        "x": 31.3,
+        "y": 14.9,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_020",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 6,
+      "coords": {
+        "x": 32.2,
+        "y": 36.1,
+        "z": 1.2
+      }
+    },
+    {
+      "id": "tm_021",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 7,
+      "coords": {
+        "x": 36.8,
+        "y": 6.2,
+        "z": 0.4
+      }
+    },
+    {
+      "id": "tm_022",
+      "level": "g17",
+      "zoneId": "kozamauka",
+      "index": 8,
+      "coords": {
+        "x": 37.9,
+        "y": 21.8,
+        "z": 0.2
+      }
+    },
+    {
+      "id": "tm_023",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 1,
+      "coords": {
+        "x": 5.6,
+        "y": 19.6,
+        "z": 3.3
+      }
+    },
+    {
+      "id": "tm_024",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 2,
+      "coords": {
+        "x": 11.3,
+        "y": 33.2,
+        "z": 1.4
+      }
+    },
+    {
+      "id": "tm_025",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 3,
+      "coords": {
+        "x": 15.5,
+        "y": 26.8,
+        "z": 1.3
+      }
+    },
+    {
+      "id": "tm_026",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 4,
+      "coords": {
+        "x": 22.6,
+        "y": 5.7,
+        "z": 3
+      }
+    },
+    {
+      "id": "tm_027",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 5,
+      "coords": {
+        "x": 24.7,
+        "y": 21,
+        "z": 1.4
+      }
+    },
+    {
+      "id": "tm_028",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 6,
+      "coords": {
+        "x": 22.7,
+        "y": 35.9,
+        "z": 1.3
+      }
+    },
+    {
+      "id": "tm_029",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 7,
+      "coords": {
+        "x": 31.2,
+        "y": 21.9,
+        "z": 3.1
+      }
+    },
+    {
+      "id": "tm_030",
+      "level": "g17",
+      "zoneId": "yaktel",
+      "index": 8,
+      "coords": {
+        "x": 36.7,
+        "y": 12.5,
+        "z": 3.3
+      }
+    },
+    {
+      "id": "tm_031",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 1,
+      "coords": {
+        "x": 12.5,
+        "y": 14.3,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_032",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 2,
+      "coords": {
+        "x": 18.5,
+        "y": 11.5,
+        "z": 0.9
+      }
+    },
+    {
+      "id": "tm_033",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 3,
+      "coords": {
+        "x": 18.2,
+        "y": 21,
+        "z": 0.9
+      }
+    },
+    {
+      "id": "tm_034",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 4,
+      "coords": {
+        "x": 19.6,
+        "y": 34.5,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_035",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 5,
+      "coords": {
+        "x": 25.6,
+        "y": 19.6,
+        "z": 0.7
+      }
+    },
+    {
+      "id": "tm_036",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 6,
+      "coords": {
+        "x": 29.3,
+        "y": 8.3,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_037",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 7,
+      "coords": {
+        "x": 31.8,
+        "y": 32.9,
+        "z": 0.9
+      }
+    },
+    {
+      "id": "tm_038",
+      "level": "g17",
+      "zoneId": "shaaloani",
+      "index": 8,
+      "coords": {
+        "x": 35.5,
+        "y": 16.8,
+        "z": 0.6
+      }
+    },
+    {
+      "id": "tm_039",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 1,
+      "coords": {
+        "x": 9.1,
+        "y": 21.3,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_040",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 2,
+      "coords": {
+        "x": 16.6,
+        "y": 13.1,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_041",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 3,
+      "coords": {
+        "x": 17.2,
+        "y": 22.3,
+        "z": 0.4
+      }
+    },
+    {
+      "id": "tm_042",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 4,
+      "coords": {
+        "x": 16.8,
+        "y": 35.8,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_043",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 5,
+      "coords": {
+        "x": 22,
+        "y": 19,
+        "z": 1
+      }
+    },
+    {
+      "id": "tm_044",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 6,
+      "coords": {
+        "x": 26.3,
+        "y": 30.8,
+        "z": 1.3
+      }
+    },
+    {
+      "id": "tm_045",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 7,
+      "coords": {
+        "x": 31.1,
+        "y": 8.3,
+        "z": 1.4
+      }
+    },
+    {
+      "id": "tm_046",
+      "level": "g17",
+      "zoneId": "heritagefound",
+      "index": 8,
+      "coords": {
+        "x": 35.7,
+        "y": 25.5,
+        "z": 1.6
+      }
+    },
+    {
+      "id": "tm_047",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 1,
+      "coords": {
+        "x": 11.8,
+        "y": 33.1,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_048",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 2,
+      "coords": {
+        "x": 13,
+        "y": 8.7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_049",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 3,
+      "coords": {
+        "x": 16.8,
+        "y": 31,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_050",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 4,
+      "coords": {
+        "x": 22.5,
+        "y": 24.6,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_051",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 5,
+      "coords": {
+        "x": 27.2,
+        "y": 24.3,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_052",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 6,
+      "coords": {
+        "x": 29,
+        "y": 17.5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_053",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 7,
+      "coords": {
+        "x": 29.9,
+        "y": 9.5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_054",
+      "level": "g15",
+      "zoneId": "elpis",
+      "index": 8,
+      "coords": {
+        "x": 37.1,
+        "y": 18.5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_055",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 1,
+      "coords": {
+        "x": 6.8,
+        "y": 20.9,
+        "z": 2.2
+      }
+    },
+    {
+      "id": "tm_056",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 2,
+      "coords": {
+        "x": 8.4,
+        "y": 30.4,
+        "z": 1.9
+      }
+    },
+    {
+      "id": "tm_057",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 3,
+      "coords": {
+        "x": 18.6,
+        "y": 18.1,
+        "z": 2
+      }
+    },
+    {
+      "id": "tm_058",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 4,
+      "coords": {
+        "x": 21.8,
+        "y": 37.5,
+        "z": 2.1
+      }
+    },
+    {
+      "id": "tm_059",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 5,
+      "coords": {
+        "x": 24.2,
+        "y": 10.9,
+        "z": 3
+      }
+    },
+    {
+      "id": "tm_060",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 6,
+      "coords": {
+        "x": 24.9,
+        "y": 21.8,
+        "z": 2
+      }
+    },
+    {
+      "id": "tm_061",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 7,
+      "coords": {
+        "x": 24.7,
+        "y": 29.6,
+        "z": 2
+      }
+    },
+    {
+      "id": "tm_062",
+      "level": "g14",
+      "zoneId": "labyrinthos",
+      "index": 8,
+      "coords": {
+        "x": 31.8,
+        "y": 14.4,
+        "z": 3.8
+      }
+    },
+    {
+      "id": "tm_063",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 1,
+      "coords": {
+        "x": 14.7,
+        "y": 7.9,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_064",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 2,
+      "coords": {
+        "x": 14.8,
+        "y": 26.6,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_065",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 3,
+      "coords": {
+        "x": 19.5,
+        "y": 14.2,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_066",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 4,
+      "coords": {
+        "x": 21.9,
+        "y": 21,
+        "z": 0.2
+      }
+    },
+    {
+      "id": "tm_067",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 5,
+      "coords": {
+        "x": 21,
+        "y": 27.2,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_068",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 6,
+      "coords": {
+        "x": 27.1,
+        "y": 8.9,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_069",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 7,
+      "coords": {
+        "x": 26.8,
+        "y": 28.9,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_070",
+      "level": "g14",
+      "zoneId": "thavnair",
+      "index": 8,
+      "coords": {
+        "x": 32.2,
+        "y": 14.4,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_071",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 1,
+      "coords": {
+        "x": 11.8,
+        "y": 25.7,
+        "z": 0.6
+      }
+    },
+    {
+      "id": "tm_072",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 2,
+      "coords": {
+        "x": 16.6,
+        "y": 11.9,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_073",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 3,
+      "coords": {
+        "x": 16.1,
+        "y": 17.8,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_074",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 4,
+      "coords": {
+        "x": 25.3,
+        "y": 12.4,
+        "z": 0.4
+      }
+    },
+    {
+      "id": "tm_075",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 5,
+      "coords": {
+        "x": 28.1,
+        "y": 26.4,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_076",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 6,
+      "coords": {
+        "x": 29.3,
+        "y": 35.4,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_077",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 7,
+      "coords": {
+        "x": 34.2,
+        "y": 9.9,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_078",
+      "level": "g14",
+      "zoneId": "garlemald",
+      "index": 8,
+      "coords": {
+        "x": 34.4,
+        "y": 17.3,
+        "z": 0.3
+      }
+    },
+    {
+      "id": "tm_079",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 1,
+      "coords": {
+        "x": 12.2,
+        "y": 26.6,
+        "z": 1.2
+      }
+    },
+    {
+      "id": "tm_080",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 2,
+      "coords": {
+        "x": 17.1,
+        "y": 19.4,
+        "z": 1.2
+      }
+    },
+    {
+      "id": "tm_081",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 3,
+      "coords": {
+        "x": 15.9,
+        "y": 34.4,
+        "z": 1.1
+      }
+    },
+    {
+      "id": "tm_082",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 4,
+      "coords": {
+        "x": 18.7,
+        "y": 25.7,
+        "z": 0.6
+      }
+    },
+    {
+      "id": "tm_083",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 5,
+      "coords": {
+        "x": 22.8,
+        "y": 36.3,
+        "z": 1.1
+      }
+    },
+    {
+      "id": "tm_084",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 6,
+      "coords": {
+        "x": 25.6,
+        "y": 33.3,
+        "z": 0.8
+      }
+    },
+    {
+      "id": "tm_085",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 7,
+      "coords": {
+        "x": 30.5,
+        "y": 24.9,
+        "z": 1
+      }
+    },
+    {
+      "id": "tm_086",
+      "level": "g14",
+      "zoneId": "marelamentorum",
+      "index": 8,
+      "coords": {
+        "x": 34.8,
+        "y": 29.9,
+        "z": 1.4
+      }
+    },
+    {
+      "id": "tm_087",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 1,
+      "coords": {
+        "x": 6.1,
+        "y": 19,
+        "z": 0.2
+      }
+    },
+    {
+      "id": "tm_088",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 2,
+      "coords": {
+        "x": 8.1,
+        "y": 30.7,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_089",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 3,
+      "coords": {
+        "x": 12.7,
+        "y": 13.4,
+        "z": 2.2
+      }
+    },
+    {
+      "id": "tm_090",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 4,
+      "coords": {
+        "x": 17.9,
+        "y": 27,
+        "z": 0.2
+      }
+    },
+    {
+      "id": "tm_091",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 5,
+      "coords": {
+        "x": 21.4,
+        "y": 36.3,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_092",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 6,
+      "coords": {
+        "x": 26.7,
+        "y": 35.5,
+        "z": 3.4
+      }
+    },
+    {
+      "id": "tm_093",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 7,
+      "coords": {
+        "x": 25.7,
+        "y": 17.2,
+        "z": 1.9
+      }
+    },
+    {
+      "id": "tm_094",
+      "level": "g14",
+      "zoneId": "ultimathule",
+      "index": 8,
+      "coords": {
+        "x": 29.6,
+        "y": 9.4,
+        "z": 2.4
+      }
+    },
+    {
+      "id": "tm_095",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 1,
+      "coords": {
+        "x": 9,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_096",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 2,
+      "coords": {
+        "x": 8,
+        "y": 28,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_097",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 3,
+      "coords": {
+        "x": 11,
+        "y": 31,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_098",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 4,
+      "coords": {
+        "x": 15,
+        "y": 16,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_099",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 5,
+      "coords": {
+        "x": 23,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_100",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 6,
+      "coords": {
+        "x": 26,
+        "y": 20,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_101",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 7,
+      "coords": {
+        "x": 32,
+        "y": 21,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_102",
+      "level": "g10",
+      "zoneId": "thefringes",
+      "index": 8,
+      "coords": {
+        "x": 33,
+        "y": 31,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_103",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 1,
+      "coords": {
+        "x": 9,
+        "y": 32,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_104",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 2,
+      "coords": {
+        "x": 12,
+        "y": 5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_105",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 3,
+      "coords": {
+        "x": 16,
+        "y": 9,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_106",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 4,
+      "coords": {
+        "x": 15,
+        "y": 23,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_107",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 5,
+      "coords": {
+        "x": 16,
+        "y": 33,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_108",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 6,
+      "coords": {
+        "x": 24,
+        "y": 32,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_109",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 7,
+      "coords": {
+        "x": 26,
+        "y": 14,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_110",
+      "level": "g10",
+      "zoneId": "thepeaks",
+      "index": 8,
+      "coords": {
+        "x": 33,
+        "y": 10,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_111",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 1,
+      "coords": {
+        "x": 6,
+        "y": 7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_112",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 2,
+      "coords": {
+        "x": 9,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_113",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 3,
+      "coords": {
+        "x": 16,
+        "y": 29,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_114",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 4,
+      "coords": {
+        "x": 20,
+        "y": 23,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_115",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 5,
+      "coords": {
+        "x": 25,
+        "y": 8,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_116",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 6,
+      "coords": {
+        "x": 24,
+        "y": 32,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_117",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 7,
+      "coords": {
+        "x": 30,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_118",
+      "level": "g10",
+      "zoneId": "thelochs",
+      "index": 8,
+      "coords": {
+        "x": 32,
+        "y": 6,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_119",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 1,
+      "coords": {
+        "x": 5,
+        "y": 15,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_120",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 2,
+      "coords": {
+        "x": 8,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_121",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 3,
+      "coords": {
+        "x": 17,
+        "y": 10,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_122",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 4,
+      "coords": {
+        "x": 18,
+        "y": 36,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_123",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 5,
+      "coords": {
+        "x": 28,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_124",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 6,
+      "coords": {
+        "x": 30,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_125",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 7,
+      "coords": {
+        "x": 33,
+        "y": 9,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_126",
+      "level": "g10",
+      "zoneId": "therubysea",
+      "index": 8,
+      "coords": {
+        "x": 33,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_127",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 1,
+      "coords": {
+        "x": 12,
+        "y": 19,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_128",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 2,
+      "coords": {
+        "x": 13,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_129",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 3,
+      "coords": {
+        "x": 20,
+        "y": 5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_130",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 4,
+      "coords": {
+        "x": 22,
+        "y": 14,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_131",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 5,
+      "coords": {
+        "x": 22,
+        "y": 28,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_132",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 6,
+      "coords": {
+        "x": 32,
+        "y": 5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_133",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 7,
+      "coords": {
+        "x": 31,
+        "y": 28,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_134",
+      "level": "g10",
+      "zoneId": "yanxia",
+      "index": 8,
+      "coords": {
+        "x": 32,
+        "y": 35,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_135",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 1,
+      "coords": {
+        "x": 5,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_136",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 2,
+      "coords": {
+        "x": 10,
+        "y": 16,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_137",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 3,
+      "coords": {
+        "x": 16,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_138",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 4,
+      "coords": {
+        "x": 15,
+        "y": 33,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_139",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 5,
+      "coords": {
+        "x": 22,
+        "y": 37,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_140",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 6,
+      "coords": {
+        "x": 29,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_141",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 7,
+      "coords": {
+        "x": 31,
+        "y": 22,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_142",
+      "level": "g10",
+      "zoneId": "theazimsteppe",
+      "index": 8,
+      "coords": {
+        "x": 29,
+        "y": 35,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_143",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 1,
+      "coords": {
+        "x": 20,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_144",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 2,
+      "coords": {
+        "x": 12,
+        "y": 24,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_145",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 3,
+      "coords": {
+        "x": 7,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_146",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 4,
+      "coords": {
+        "x": 21,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_147",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 5,
+      "coords": {
+        "x": 28,
+        "y": 15,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_148",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 6,
+      "coords": {
+        "x": 34,
+        "y": 7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_149",
+      "level": "g8",
+      "zoneId": "coerthaswesternhighlands",
+      "index": 7,
+      "coords": {
+        "x": 36,
+        "y": 26,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_150",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 1,
+      "coords": {
+        "x": 28,
+        "y": 24,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_151",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 2,
+      "coords": {
+        "x": 23,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_152",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 3,
+      "coords": {
+        "x": 27,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_153",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 4,
+      "coords": {
+        "x": 24,
+        "y": 32,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_154",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 5,
+      "coords": {
+        "x": 18,
+        "y": 34,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_155",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 6,
+      "coords": {
+        "x": 14,
+        "y": 34,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_156",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 7,
+      "coords": {
+        "x": 13,
+        "y": 34,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_157",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 8,
+      "coords": {
+        "x": 12,
+        "y": 34,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_158",
+      "level": "g8",
+      "zoneId": "thedravanianforelands",
+      "index": 9,
+      "coords": {
+        "x": 10,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_159",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 1,
+      "coords": {
+        "x": 29,
+        "y": 37,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_160",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 2,
+      "coords": {
+        "x": 21,
+        "y": 38,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_161",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 3,
+      "coords": {
+        "x": 17,
+        "y": 33,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_162",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 4,
+      "coords": {
+        "x": 32,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_163",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 5,
+      "coords": {
+        "x": 23,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_164",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 6,
+      "coords": {
+        "x": 11,
+        "y": 20,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_165",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 7,
+      "coords": {
+        "x": 8,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_166",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 8,
+      "coords": {
+        "x": 13,
+        "y": 13,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_167",
+      "level": "g8",
+      "zoneId": "thechurningmists",
+      "index": 9,
+      "coords": {
+        "x": 10,
+        "y": 9,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_168",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 1,
+      "coords": {
+        "x": 6,
+        "y": 7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_169",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 2,
+      "coords": {
+        "x": 20,
+        "y": 5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_170",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 3,
+      "coords": {
+        "x": 22,
+        "y": 10,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_171",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 4,
+      "coords": {
+        "x": 17,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_172",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 5,
+      "coords": {
+        "x": 31,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_173",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 6,
+      "coords": {
+        "x": 29,
+        "y": 24,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_174",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 7,
+      "coords": {
+        "x": 14,
+        "y": 27,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_175",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 8,
+      "coords": {
+        "x": 21,
+        "y": 31,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_176",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 9,
+      "coords": {
+        "x": 19,
+        "y": 35,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_177",
+      "level": "g8",
+      "zoneId": "theseaofclouds",
+      "index": 10,
+      "coords": {
+        "x": 10,
+        "y": 38,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_178",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 1,
+      "coords": {
+        "x": 8,
+        "y": 21,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_179",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 2,
+      "coords": {
+        "x": 10,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_180",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 3,
+      "coords": {
+        "x": 10,
+        "y": 11,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_181",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 4,
+      "coords": {
+        "x": 13,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_182",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 5,
+      "coords": {
+        "x": 17,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_183",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 6,
+      "coords": {
+        "x": 18,
+        "y": 7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_184",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 7,
+      "coords": {
+        "x": 34,
+        "y": 25,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_185",
+      "level": "g12",
+      "zoneId": "lakeland",
+      "index": 8,
+      "coords": {
+        "x": 38,
+        "y": 13,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_186",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 1,
+      "coords": {
+        "x": 7,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_187",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 2,
+      "coords": {
+        "x": 11,
+        "y": 13,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_188",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 3,
+      "coords": {
+        "x": 13,
+        "y": 16,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_189",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 4,
+      "coords": {
+        "x": 20,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_190",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 5,
+      "coords": {
+        "x": 21,
+        "y": 9.5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_191",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 6,
+      "coords": {
+        "x": 30,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_192",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 7,
+      "coords": {
+        "x": 34,
+        "y": 10,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_193",
+      "level": "g12",
+      "zoneId": "kholusia",
+      "index": 8,
+      "coords": {
+        "x": 33,
+        "y": 31,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_194",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 1,
+      "coords": {
+        "x": 12,
+        "y": 14,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_195",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 2,
+      "coords": {
+        "x": 13,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_196",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 3,
+      "coords": {
+        "x": 27,
+        "y": 13,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_197",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 4,
+      "coords": {
+        "x": 26,
+        "y": 23,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_198",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 5,
+      "coords": {
+        "x": 30,
+        "y": 30,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_199",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 6,
+      "coords": {
+        "x": 32,
+        "y": 8,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_200",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 7,
+      "coords": {
+        "x": 36,
+        "y": 11,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_201",
+      "level": "g12",
+      "zoneId": "amharaeng",
+      "index": 8,
+      "coords": {
+        "x": 34,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_202",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 1,
+      "coords": {
+        "x": 7,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_203",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 2,
+      "coords": {
+        "x": 10,
+        "y": 13,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_204",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 3,
+      "coords": {
+        "x": 12,
+        "y": 20,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_205",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 4,
+      "coords": {
+        "x": 14,
+        "y": 27,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_206",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 5,
+      "coords": {
+        "x": 21,
+        "y": 7,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_207",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 6,
+      "coords": {
+        "x": 25,
+        "y": 12,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_208",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 7,
+      "coords": {
+        "x": 31,
+        "y": 4,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_209",
+      "level": "g12",
+      "zoneId": "ilmheg",
+      "index": 8,
+      "coords": {
+        "x": 33,
+        "y": 10,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_210",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 1,
+      "coords": {
+        "x": 11,
+        "y": 19,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_211",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 2,
+      "coords": {
+        "x": 13,
+        "y": 24,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_212",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 3,
+      "coords": {
+        "x": 22,
+        "y": 32,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_213",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 4,
+      "coords": {
+        "x": 24,
+        "y": 15,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_214",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 5,
+      "coords": {
+        "x": 24,
+        "y": 27,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_215",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 6,
+      "coords": {
+        "x": 26,
+        "y": 34,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_216",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 7,
+      "coords": {
+        "x": 34,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_217",
+      "level": "g12",
+      "zoneId": "theraktikagreatwood",
+      "index": 8,
+      "coords": {
+        "x": 35,
+        "y": 22,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_218",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 1,
+      "coords": {
+        "x": 12,
+        "y": 11,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_219",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 2,
+      "coords": {
+        "x": 13,
+        "y": 14,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_220",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 3,
+      "coords": {
+        "x": 16,
+        "y": 18,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_221",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 4,
+      "coords": {
+        "x": 19,
+        "y": 8,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_222",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 5,
+      "coords": {
+        "x": 25,
+        "y": 11,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_223",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 6,
+      "coords": {
+        "x": 32,
+        "y": 5,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_224",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 7,
+      "coords": {
+        "x": 30,
+        "y": 20,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_225",
+      "level": "g12",
+      "zoneId": "thetempest",
+      "index": 8,
+      "coords": {
+        "x": 37,
+        "y": 17,
+        "z": 0
+      }
+    },
+    {
+      "id": "tm_226",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 1,
+      "coords": {
+        "x": 9.3,
+        "y": 10.7,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_227",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 2,
+      "coords": {
+        "x": 10.4,
+        "y": 36.0,
+        "z": 0.1
+      }
+    },
+    {
+      "id": "tm_228",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 3,
+      "coords": {
+        "x": 18.5,
+        "y": 15.8,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_229",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 4,
+      "coords": {
+        "x": 20.2,
+        "y": 23.0,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_230",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 5,
+      "coords": {
+        "x": 25.0,
+        "y": 6.9,
+        "z": 0.5
+      }
+    },
+    {
+      "id": "tm_231",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 6,
+      "coords": {
+        "x": 31.0,
+        "y": 18.1,
+        "z": 0.4
+      }
+    },
+    {
+      "id": "tm_232",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 7,
+      "coords": {
+        "x": 38.5,
+        "y": 28.1,
+        "z": 0.6
+      }
+    },
+    {
+      "id": "tm_233",
+      "level": "g18",
+      "zoneId": "livingmemory",
+      "index": 8,
+      "coords": {
+        "x": 35.0,
+        "y": 35.3,
+        "z": 0.2
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a new capability or improvement.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What should become easier or possible?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy, permissions, or deployment considerations
+      description: Note any member data, Discord permissions, external services, or platform-specific behavior involved.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

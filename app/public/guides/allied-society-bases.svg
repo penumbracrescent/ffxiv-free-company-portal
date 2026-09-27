@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Allied Society base directory</title>
+  <desc id="desc">Original coordinate reference showing combat, crafting, and gathering society bases from Heavensward through Dawntrail.</desc>
+  <rect width="1200" height="675" fill="#170628"/>
+  <rect x="28" y="28" width="1144" height="619" rx="28" fill="#23083d" stroke="#8d50bd" stroke-width="3"/>
+  <text x="60" y="82" fill="#f6efff" font-family="Arial,sans-serif" font-size="34" font-weight="700">ALLIED SOCIETY BASE DIRECTORY</text>
+  <text x="60" y="116" fill="#cab8d9" font-family="Arial,sans-serif" font-size="18">Use Teleport, then match the zone coordinates shown in the individual guide.</text>
+  <g font-family="Arial,sans-serif">
+    <rect x="58" y="150" width="340" height="455" rx="18" fill="#351254" stroke="#a85be0"/>
+    <text x="82" y="190" fill="#ffcc68" font-size="23" font-weight="700">COMBAT</text>
+    <g fill="#f4ebfa" font-size="17">
+      <text x="82" y="232">Vanu · Sea of Clouds 6.5, 14.4</text>
+      <text x="82" y="270">Vath · Forelands 23.7, 19.1</text>
+      <text x="82" y="308">Kojin · Ruby Sea 29.3, 16.8</text>
+      <text x="82" y="346">Ananta · Fringes 21.7, 26.2</text>
+      <text x="82" y="384">Pixie · Il Mheg 12.4, 32.9</text>
+      <text x="82" y="422">Arkasodara · Thavnair 20.4, 28.4</text>
+      <text x="82" y="460">Pelupelu · Kozama'uka 37.2, 16.8</text>
+    </g>
+    <rect x="430" y="150" width="340" height="455" rx="18" fill="#351254" stroke="#a85be0"/>
+    <text x="454" y="190" fill="#ffcc68" font-size="23" font-weight="700">CRAFTING</text>
+    <g fill="#f4ebfa" font-size="17">
+      <text x="454" y="232">Moogle · Churning Mists 15.7, 28.8</text>
+      <text x="454" y="270">Namazu · Azim Steppe 5.8, 23.4</text>
+      <text x="454" y="308">Dwarf · Lakeland 9.1, 12.9</text>
+      <text x="454" y="346">Loporrit · Mare 17.4, 16.0</text>
+      <text x="454" y="384">Yok Huy · Urqopacha 30.5, 34.2</text>
+    </g>
+    <rect x="802" y="150" width="340" height="455" rx="18" fill="#351254" stroke="#a85be0"/>
+    <text x="826" y="190" fill="#ffcc68" font-size="23" font-weight="700">GATHERING</text>
+    <g fill="#f4ebfa" font-size="17">
+      <text x="826" y="232">Namazu · Azim Steppe 5.8, 23.4</text>
+      <text x="826" y="270">Qitari · Rak'tika 37.2, 17.5</text>
+      <text x="826" y="308">Omicron · Ultima Thule 27.7, 24.4</text>
+      <text x="826" y="346">Mamool Ja · Yak T'el 33.2, 36.0</text>
+    </g>
+    <text x="826" y="555" fill="#cab8d9" font-size="15">Quest nodes appear only while</text>
+    <text x="826" y="578" fill="#cab8d9" font-size="15">the daily is active on its job.</text>
+  </g>
+</svg>
