@@ -155,6 +155,16 @@ Public installations must use HTTPS. The configured portal URL, authentication U
 
 Credentials for tunnels and authentication providers belong in the private `.env` file and must never be committed.
 
+### Cloudflare Tunnel sequence
+
+1. In Cloudflare Zero Trust, open **Networking → Tunnels** and create a Cloudflared tunnel.
+2. Select the Docker connector. Copy only the long private value after `--token` from Cloudflare's sample command. Do not run the sample command because this project starts its own Cloudflared container.
+3. Enter the intended public hostname and tunnel token in the portal setup wizard.
+4. Seal the configuration and start the complete Docker Compose stack.
+5. In the tunnel settings, add a published application route for the selected hostname.
+6. Leave the path blank and use `http://portal:3000` as the service URL.
+7. Wait for the tunnel to report **Healthy**, then verify the public HTTPS address.
+
 ## Authentication
 
 Direct Discord OAuth is the default authentication method and does not require Authentik.
