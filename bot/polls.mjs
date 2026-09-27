@@ -47,6 +47,13 @@ export async function ensurePollBotTables(pool){
     from portal_polls p join portal_poll_discord_artifacts a on a.poll_id=p.id and a.artifact_kind='opening' and a.active=true
     where p.status='closed' and p.poll_type='image' and p.winner_choice_id is not null and p.post_results=true
     on conflict(dedupe_key) do nothing`);
+  await pool.query(`insert into portal_poll_discord_jobs(poll_id,job_kind,dedupe_key)
+    select p.id,'sync_results','poll:'||p.id||':sync_results:standalone-v1'
+    from portal_polls p
+    where p.status='closed' and p.post_results=true and p.updated_at>=now()-interval '7 days'
+      and exists(select 1 from portal_poll_discord_artifacts a where a.poll_id=p.id and a.active=true and(a.artifact_kind='opening' or a.artifact_kind like 'reminder:%'))
+      and not exists(select 1 from portal_poll_discord_artifacts a where a.poll_id=p.id and a.active=true and a.artifact_kind='results')
+    on conflict(dedupe_key) do nothing`);
 }
 
 async function loadPoll(pool,pollId,includeImages=false){
@@ -87,6 +94,29 @@ async function syncArtifact(pool,bot,poll,artifactKind,payload){
   const existing=(await pool.query(`select * from portal_poll_discord_artifacts where poll_id=$1 and artifact_kind=$2 and active=true`,[poll.id,artifactKind])).rows[0],channel=await bot.channels.fetch(poll.target_channel_id);if(!channel?.isTextBased()||!channel.messages)throw new Error("Poll channel is not accessible to the bot.");let message=existing?await channel.messages.fetch(existing.message_id).catch(()=>null):null;if(message)await message.edit(payload.files?.length?{...payload,attachments:[]}:payload);else message=await channel.send(payload);await pool.query(`insert into portal_poll_discord_artifacts(poll_id,artifact_kind,channel_id,message_id,last_synced_at,last_error) values($1,$2,$3,$4,now(),null) on conflict(poll_id,artifact_kind) do update set channel_id=excluded.channel_id,message_id=excluded.message_id,active=true,last_synced_at=now(),last_error=null,updated_at=now()`,[poll.id,artifactKind,channel.id,message.id]);
 }
 
+async function syncClosedPollArtifacts(pool,bot,poll,payload){
+  const artifacts=(await pool.query(`select * from portal_poll_discord_artifacts where poll_id=$1 and active=true and(artifact_kind='opening' or artifact_kind like 'reminder:%') order by id`,[poll.id])).rows;
+  for(const artifact of artifacts){
+    const channel=await bot.channels.fetch(artifact.channel_id).catch(()=>null);
+    if(!channel?.isTextBased()||!channel.messages)throw new Error("A poll announcement channel is not accessible to the bot.");
+    const message=await channel.messages.fetch(artifact.message_id).catch(()=>null);
+    if(!message){await pool.query(`update portal_poll_discord_artifacts set active=false,last_error='Discord message no longer exists',updated_at=now() where id=$1`,[artifact.id]);continue;}
+    const reminderContent=poll.status==='cancelled'?`Poll cancelled: **${cut(poll.question,160)}**. Voting is no longer available.`:poll.post_results?`Poll closed: **${cut(poll.question,160)}**. Final results are available below.`:`Poll closed: **${cut(poll.question,160)}**. Voting is no longer available.`;
+    const closedPayload=artifact.artifact_kind.startsWith('reminder:')?{...payload,content:reminderContent}:payload;
+    await message.edit(closedPayload.files?.length?{...closedPayload,attachments:[]}:closedPayload);
+    await pool.query(`update portal_poll_discord_artifacts set last_synced_at=now(),last_error=null,updated_at=now() where id=$1`,[artifact.id]);
+  }
+}
+
+async function syncClosedPoll(pool,bot,poll,{postResults=false}={}){
+  const payload=await pollPayload(pool,poll);
+  await syncClosedPollArtifacts(pool,bot,poll,payload);
+  if(postResults&&poll.post_results){
+    const resultsPayload={...payload,content:`Final results: **${cut(poll.question,160)}**`};
+    await syncArtifact(pool,bot,poll,'results',resultsPayload);
+  }
+}
+
 async function syncOfficerTieAlert(pool,bot,poll){
   const existing=(await pool.query(`select * from portal_poll_discord_artifacts where poll_id=$1 and artifact_kind='tie_alert' and active=true`,[poll.id])).rows[0],settings=(await pool.query(`select officer_log_channel_id from portal_discord_bot_settings where id=1`).catch(()=>({rows:[]}))).rows[0],channelId=String(settings?.officer_log_channel_id||"").trim();
   if(!channelId){if(existing)await pool.query(`update portal_poll_discord_artifacts set active=false,last_error='Officer log channel is not configured',updated_at=now() where id=$1`,[existing.id]);return;}
@@ -109,6 +139,8 @@ let running=false;
 export async function processPollJobs({pool,bot}){if(running)return;running=true;try{await ensurePollBotTables(pool);await pool.query(`update portal_polls set status='open',updated_at=now() where status='scheduled' and opens_at<=now()`);const due=(await pool.query(`select * from portal_polls where status='open' and closes_at<=now() order by closes_at limit 10`)).rows;for(const poll of due)await revalidateAndClose(pool,bot,poll);for(let index=0;index<20;index++){const job=await claimJob(pool);if(!job)break;try{const poll=await loadPoll(pool,job.poll_id);if(!poll){await completeJob(pool,job);continue;}if(job.job_kind==='delete_artifacts'){const artifacts=(await pool.query(`select * from portal_poll_discord_artifacts where poll_id=$1 and active=true`,[poll.id])).rows;for(const artifact of artifacts){const channel=await bot.channels.fetch(artifact.channel_id).catch(()=>null);await channel?.messages?.delete(artifact.message_id).catch(error=>{if(error?.code!==10008)throw error;});}await pool.query(`update portal_poll_discord_artifacts set active=false,updated_at=now() where poll_id=$1`,[poll.id]);if(job.payload?.deletePoll&&poll.is_test)await pool.query(`delete from portal_polls where id=$1 and is_test=true`,[poll.id]);}
         else if(job.job_kind==='tie_alert')await syncOfficerTieAlert(pool,bot,poll);
         else if(job.job_kind==='reminder'){if(poll.status==='open'){const payload=await pollPayload(pool,poll);payload.content=`Reminder: **${cut(poll.question,160)}** closes <t:${Math.floor(new Date(poll.closes_at).getTime()/1000)}:R>.`;await syncArtifact(pool,bot,poll,`reminder:${job.payload?.minutes||job.id}`,payload);}}
+        else if(job.job_kind==='sync_results')await syncClosedPoll(pool,bot,poll,{postResults:true});
+        else if(['closed','cancelled'].includes(poll.status))await syncClosedPoll(pool,bot,poll);
         else await syncArtifact(pool,bot,poll,'opening',await pollPayload(pool,poll));await completeJob(pool,job);}catch(error){console.error(`[cotf-bot] Poll job ${job.id} failed:`,error);await completeJob(pool,job,error);}}
   }finally{running=false;}}
 

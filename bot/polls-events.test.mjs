@@ -136,6 +136,17 @@ test("closed image polls identify the winner and edit the original post with its
   assert.match(polls, /sync_results:winner-image-v1/);
 });
 
+test("closed polls publish one durable result and retire every opening and reminder control", () => {
+  assert.match(polls, /sync_results:standalone-v1/);
+  assert.match(polls, /artifact_kind='results'/);
+  assert.match(polls, /artifact_kind='opening' or artifact_kind like 'reminder:%'/);
+  assert.match(polls, /syncClosedPollArtifacts/);
+  assert.match(polls, /Poll closed:/);
+  assert.match(polls, /Final results:/);
+  assert.match(polls, /syncArtifact\(pool,bot,poll,'results',resultsPayload\)/);
+  assert.match(polls, /job\.job_kind==='sync_results'/);
+});
+
 test("poll and event components use privacy-minimized diagnostics", () => {
   assert.match(bot, /outcome:error\?"failure":"success"/);
   assert.match(bot, /recordFaeDiagnostic/);
