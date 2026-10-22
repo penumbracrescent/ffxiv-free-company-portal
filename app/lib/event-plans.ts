@@ -75,7 +75,6 @@ export async function createEventPlan(client: Client, actor: EventPlanActor, inp
   const result=await client.query(`insert into portal_event_plans(event_type,title,description,duty_id,duty_name,duty_image_url,mount_id,mount_name,mount_image_url,level,party_size,standard_party_roles_required,possible_start_date,possible_end_date,duration_minutes,event_time_zone,target_channel_id,target_channel_name,created_by_discord_user_id,created_by_character_id,created_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) returning id::int`,[input.eventType||"custom",title,description,duty?.id||null,duty?.name||null,duty?.image_url||null,mount?.id||null,mount?.mount_name||null,mount?.image_url||null,duty?.level||input.level||null,partySize,Boolean(input.standardRoles),input.startDate,input.endDate,duration,input.timeZone||"America/Chicago",input.targetChannelId,input.targetChannelName||"Party Planner",actor.discordUserId,actor.characterId,actor.characterName]);
   const planId=Number(result.rows[0].id);
   await client.query(`insert into portal_event_plan_interest(plan_id,discord_user_id,character_id,status) values($1,$2,$3,'interested') on conflict(plan_id,discord_user_id) do nothing`,[planId,actor.discordUserId,actor.characterId]);
-  await attachSavedAvailability(client,planId,actor.discordUserId,actor.characterId);
   return planId;
 }
 
@@ -99,17 +98,16 @@ export async function updateEventPlan(client:Client,planId:number,actor:EventPla
 
 export async function cancelEventPlan(client:Client,planId:number,actor:EventPlanActor){await ensureEventPlanningTables(client);const result=await client.query(`update portal_event_plans set status='cancelled',cancelled_at=now(),cancelled_by=$3,sync_requested_at=now(),updated_at=now() where id=$1 and status='collecting' and ($2 or created_by_discord_user_id=$4)`,[planId,actor.isOfficer,actor.characterName,actor.discordUserId]);if(!result.rowCount)throw new Error("Only the organizer or an officer can cancel an active request.");}
 
-export async function attachSavedAvailability(client:Client,planId:number,discordUserId:string,characterId:number|null){
+export async function markEventPlanInterest(client:Client,planId:number,discordUserId:string,characterId:number|null){
   await ensureEventPlanningTables(client);
-  const active=(await client.query(`select 1 from portal_member_availability_profiles where discord_user_id=$1 and ((schedule_scope='ongoing' and last_confirmed_at>=now()-interval '${AVAILABILITY_STALE_DAYS} days') or (schedule_scope<>'ongoing' and expires_at>now())) and exists(select 1 from portal_member_availability_windows where discord_user_id=$1)`,[discordUserId])).rowCount>0;
-  await client.query(`insert into portal_event_plan_interest(plan_id,discord_user_id,character_id,status,availability_source,availability_confirmed_at) values($1,$2,$3,'interested',$4,case when $5 then now() else null end) on conflict(plan_id,discord_user_id) do update set character_id=excluded.character_id,status='interested',availability_source=case when portal_event_plan_interest.availability_source='plan' then 'plan' else excluded.availability_source end,availability_confirmed_at=case when portal_event_plan_interest.availability_source='plan' then portal_event_plan_interest.availability_confirmed_at else excluded.availability_confirmed_at end,updated_at=now()`,[planId,discordUserId,characterId,active?'saved':null,active]);
+  await client.query(`insert into portal_event_plan_interest(plan_id,discord_user_id,character_id,status) values($1,$2,$3,'interested') on conflict(plan_id,discord_user_id) do update set character_id=excluded.character_id,status='interested',availability_source=case when portal_event_plan_interest.availability_source='plan' then 'plan' else null end,availability_confirmed_at=case when portal_event_plan_interest.availability_source='plan' then portal_event_plan_interest.availability_confirmed_at else null end,updated_at=now()`,[planId,discordUserId,characterId]);
   await client.query(`update portal_event_plans set sync_requested_at=now(),updated_at=now() where id=$1`,[planId]);
-  return active;
 }
-
 export async function attachPlanAvailability(client:Client,planId:number,discordUserId:string,characterId:number,timeZone:string,windows:AvailabilityWindow[]){
   await ensureEventPlanningTables(client);
-  const valid=windows.filter((window,index,array)=>Number.isInteger(window.day)&&window.day>=0&&window.day<=6&&Number.isInteger(window.slot)&&window.slot>=0&&window.slot<=1&&Number.isInteger(window.start)&&window.start>=0&&window.start<1440&&Number.isInteger(window.end)&&window.end>window.start&&window.end<=1800&&array.findIndex((item)=>item.day===window.day&&item.slot===window.slot)===index);
+  const plan=(await client.query(`select possible_start_date,possible_end_date from portal_event_plans where id=$1 and status='collecting'`,[planId])).rows[0];if(!plan)throw new Error("This planning request is no longer collecting responses.");
+  const allowedDays=new Set<number>();for(let cursor=dateKey(plan.possible_start_date);cursor<=dateKey(plan.possible_end_date);cursor=addDate(cursor,1))allowedDays.add(new Date(`${cursor}T12:00:00Z`).getUTCDay());
+  const valid=windows.filter((window,index,array)=>allowedDays.has(window.day)&&Number.isInteger(window.slot)&&window.slot>=0&&window.slot<=1&&Number.isInteger(window.start)&&window.start>=0&&window.start<1440&&Number.isInteger(window.end)&&window.end>window.start&&window.end<=1800&&array.findIndex((item)=>item.day===window.day&&item.slot===window.slot)===index);
   if(valid.length!==windows.length||valid.length===0)throw new Error("Add at least one valid availability period for this plan.");
   await client.query("begin");try{
     await client.query(`insert into portal_event_plan_interest(plan_id,discord_user_id,character_id,status,availability_source,availability_confirmed_at) values($1,$2,$3,'interested','plan',now()) on conflict(plan_id,discord_user_id) do update set character_id=excluded.character_id,status='interested',availability_source='plan',availability_confirmed_at=now(),updated_at=now()`,[planId,discordUserId,characterId]);

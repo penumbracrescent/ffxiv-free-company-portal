@@ -1,4 +1,8 @@
 import type { CraftingItem, CraftingRecipe, CraftingRequirementRow } from "./types";
+function ownedCredit(required:number,hqGoal:number,total:number,hq:number){
+  const hqStock=Math.min(total,Math.max(0,hq));
+  return Math.min(required-hqGoal,total-hqStock)+Math.min(hqGoal,hqStock)+Math.min(Math.max(0,required-hqGoal-(total-hqStock)),Math.max(0,hqStock-hqGoal));
+}
 
 type CalculationInput = {
   topLevel: Array<{ itemId: number; quantity: number }>;
@@ -8,6 +12,7 @@ type CalculationInput = {
   claimsByItem?: Map<number, number>;
   recipeOverrides?: Map<number, number>;
   maxDepth?: number;
+  qualityGoals?: Map<number, number>;
 };
 
 /**
@@ -42,6 +47,12 @@ export function calculateCraftingRequirements(input: CalculationInput): Crafting
   };
 
   const demand = new Map<number, number>();
+  const credit = (id:number, required:number) => {
+    const stock=input.contributionsByItem?.get(id);
+    if(!stock)return 0;
+    const goal=input.qualityGoals?.get(id)||0;
+    return goal ? ownedCredit(required,Math.min(required,goal),stock.total,stock.hq) : stock.total;
+  };
   const expandedNet = new Map<number, number>();
   const depthByItem = new Map<number, number>();
   const parentByItem = new Map<number, number | null>();
@@ -62,7 +73,7 @@ export function calculateCraftingRequirements(input: CalculationInput): Crafting
     if (!item || !recipe || item.isRaw) continue;
     const depth = depthByItem.get(itemId) ?? 0;
     if (depth >= maxDepth || hasCycle(itemId)) { cycleBlocked.add(itemId); continue; }
-    const contributed = input.contributionsByItem?.get(itemId)?.total ?? 0;
+    const contributed = credit(itemId,demand.get(itemId)??0);
     const netDemand = Math.max(0, (demand.get(itemId) ?? 0) - contributed);
     const priorNetDemand = expandedNet.get(itemId) ?? 0;
     if (netDemand <= priorNetDemand) continue;
@@ -86,11 +97,12 @@ export function calculateCraftingRequirements(input: CalculationInput): Crafting
     const item = items.get(itemId)!;
     const contribution = input.contributionsByItem?.get(itemId) ?? { total: 0, nq: 0, hq: 0 };
     const claimed = input.claimsByItem?.get(itemId) ?? 0;
-    const remaining = Math.max(0, required - contribution.total);
+    const usable = credit(itemId,required);
+    const remaining = Math.max(0, required - usable);
     const recipe = chooseRecipe(itemId);
     return {
       itemId, itemName: item.name, iconUrl: item.iconUrl, canBeHq: item.canBeHq, level: item.level, itemLevel: item.itemLevel, sources: item.sources ?? [],
-      required, contributed: contribution.total, contributedNq: contribution.nq, contributedHq: contribution.hq,
+      required, contributed: usable, contributedNq: contribution.nq, contributedHq: contribution.hq,
       remaining, claimed, unclaimed: Math.max(0, remaining - claimed), surplus: Math.max(0, contribution.total - required),
       craftCount: recipe ? Math.ceil(remaining / Math.max(1, recipe.outputQuantity)) : 0,
       outputQuantity: recipe?.outputQuantity ?? 1, isRaw: item.isRaw || !recipe,

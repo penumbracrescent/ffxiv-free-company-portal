@@ -36,6 +36,10 @@ import { ensureFashionReportTables, processFashionReport } from "./fashion-repor
 import { ensureAnimeRankingTables, processAnimeRanking } from "./anime-rankings.mjs";
 import { ensureLodestoneNewsTables, processLodestoneNews } from "./lodestone-news.mjs";
 import { buildFaeCommand, createFaeDiagnosticReference, disabledFaeCommandReply, handleFaeCommand, handleFaeComponent, isFaeCommandEnabled, recordFaeDiagnostic } from "./fae-commands.mjs";
+import {handleGearPost} from './gear-share.mjs';
+import {handleGearAdjustment}from './gear-adjust.mjs';
+import {gearReply}from './gear-command.mjs';
+import {canUseGearButtons}from './fae-commands.mjs';
 import { createAltCharacterClaims } from "./alt-character-claims.mjs";
 import { handleShareAutocomplete, handleShareCommand, handleShareComponent } from "./share-commands.mjs";
 import { handleCraftMacroAutocomplete, handleCraftMacroCommand, handleCraftMacroModal } from "./craft-macro.mjs";
@@ -6304,6 +6308,14 @@ bot.on("messageDelete",async message=>{try{await mirrorAutoEnrolledGiveawaySourc
 // -------------------------
 
 bot.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton() && interaction.customId.startsWith('fae:gear:adjust:')) {
+    await handleGearAdjustment(interaction,{canUse:async current=>!await isDiscordPrivacySuppressed(current.user.id)&&await canUseGearButtons(pool,current),isOfficer:async current=>Boolean(await isProtectedPortalAdministrator(current.user.id))||Boolean(current.memberPermissions?.has(PermissionFlagsBits.ManageGuild)),render:(current,input,options)=>gearReply(current,null,{...options,input})});
+    return;
+  }
+  if (interaction.isButton() && interaction.customId.startsWith('fae:gear:post:')) {
+    await handleGearPost(interaction,{isOfficer:async current=>!await isDiscordPrivacySuppressed(current.user.id)&&await isFaeCommandEnabled(pool,'gear')&&(Boolean(await isProtectedPortalAdministrator(current.user.id))||Boolean(current.memberPermissions?.has(PermissionFlagsBits.ManageGuild)))});
+    return;
+  }
   if ((interaction.isButton() || interaction.isStringSelectMenu() || interaction.isModalSubmit()) && interaction.customId.startsWith("fae:availability:")) {
     await handleAvailabilityInteraction(interaction,pool,{isOfficer:async(current)=>Boolean(await isProtectedPortalAdministrator(current.user.id))||Boolean(current.memberPermissions?.has(PermissionFlagsBits.ManageGuild))});
     return;
@@ -6717,7 +6729,7 @@ bot.on("interactionCreate", async (interaction) => {
         if (await isDiscordPrivacySuppressed(interaction.user.id)) {
           await interaction.editReply(buildPrivacyOptInPrompt(interaction.user.id, ""));
         } else {
-          await handleFaeCommand(interaction, pool, { alreadyDeferred: true });
+          await handleFaeCommand(interaction, pool, { alreadyDeferred: true, isOfficer:Boolean(await isProtectedPortalAdministrator(interaction.user.id))||Boolean(interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) });
         }
       } catch (error) {
         console.error("[cotf-bot] Privacy gate configuration failed:", error.message);

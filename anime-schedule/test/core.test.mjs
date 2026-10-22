@@ -48,7 +48,7 @@ test("status query binds its Discord horizon parameter", async () => {
 });
 test("Google output routes SUB and DUB to separate calendar IDs", async () => {
   const source = await readFile(new URL("../src/google.mjs", import.meta.url), "utf8");
-  assert.ok(source.includes('languages: [target.language]'));
+  assert.ok(source.includes("target.language === 'sub' ? ['sub','raw'] : [target.language]"));
   assert.ok(source.includes('externalContainerId: target.calendarId'));
   assert.ok(source.includes('release.external_container_id === target.calendarId'));
 });

@@ -24,7 +24,7 @@ export async function ensureSchema() {
       episode_number numeric,
       episode_label text,
       release_kind text not null default 'episode',
-      language text not null check (language in ('sub','dub')),
+      language text not null check (language in ('sub','dub','raw')),
       status text not null default 'expected' check (status in ('confirmed','expected','delayed','unknown','released')),
       starts_at timestamptz not null,
       duration_minutes integer,
@@ -40,10 +40,14 @@ export async function ensureSchema() {
       unique(series_id, language, episode_label)
     );
   `);
+  await pool.query(`alter table anime.releases drop constraint if exists releases_language_check;
+    alter table anime.releases add constraint releases_language_check check (language in ('sub','dub','raw'));`);
   await pool.query(`alter table anime.series add column if not exists source_route text;`);
   await pool.query(`alter table anime.series add column if not exists description text;`);
   await pool.query(`alter table anime.series add column if not exists source_url text;`);
   await pool.query(`alter table anime.series add column if not exists description_updated_at timestamptz;`);
+  await pool.query(`alter table anime.series add column if not exists episode_count integer;`);
+  await pool.query(`alter table anime.series add column if not exists metadata_updated_at timestamptz;`);
   await pool.query(`alter table anime.releases add column if not exists delayed_until timestamptz;`);
   await pool.query(`alter table anime.releases add column if not exists delay_note text;`);
   await pool.query(`

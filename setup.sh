@@ -21,7 +21,7 @@ if [ -f "$INSTALLATION_FILE" ]; then
     echo "Docker is needed only for this final sealing step. Copy the folder to its Docker host, then run setup.sh there." >&2
     exit 1
   fi
-  docker run --rm --user "$(id -u):$(id -g)" -v "$ROOT:/install" -w /install node:24-alpine node installer/finalize.mjs
+  docker run --rm --user "$(id -u):$(id -g)" -v "$ROOT:/install" -w /install node:24.22.1-alpine node installer/finalize.mjs
   echo "Configuration sealed. Start the complete portal with:"
   echo "  docker compose up -d --build"
   exit 0

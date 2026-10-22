@@ -54,9 +54,9 @@ test("event planning defaults to Party Planner and keeps hidden channels out of 
   assert.equal((events.match(/await validateTargetChannel\(pool,interaction,channelId\)/g)||[]).length,2);
   assert.match(events, /portal_event_plan_interest/);
   assert.match(events, /Only members who click \*\*I'm Interested\*\*/);
-  assert.match(events, /Set Event-Specific Hours/);
-  assert.match(events, /Change Event-Specific Hours/);
-  assert.match(events, /const planSpecific=/);
+  assert.match(events, /action==='interest'\|\|action==='availability'/);
+  assert.match(events, /beginPlanAvailabilityDraft\(pool,plan,interaction\.user\.id\)/);
+  assert.doesNotMatch(events, /Update Saved Availability/);
   assert.match(events, /availability_source='plan'/);
   assert.match(events, /availability_source=case when portal_event_plan_interest\.availability_source='plan'/);
   assert.match(events, /day_of_week::int as "day"/);

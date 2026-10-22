@@ -13,8 +13,11 @@ import CharacterSwitcher from "./components/CharacterSwitcher";
 import MemberDirectoryView from "./components/MemberDirectoryView";
 import MountCharacterProgressList from "./components/MountCharacterProgressList";
 import MemberEventWizard from "./components/MemberEventWizard";
+import PersonalCraftPlanner from "./components/PersonalCraftPlanner";
+import TimedGathering from "./components/TimedGathering";
 import CraftingWorkshopView from "./components/CraftingWorkshopView";
 import PortalCalculators from "./components/PortalCalculators";
+import GearPlanner from "./components/GearPlanner";
 import CommunityGalleryPostCard from "./components/CommunityGalleryPostCard";
 import CommunityGalleryBrowser from "./components/CommunityGalleryBrowser";
 import FcGalleryViewer from "./components/FcGalleryViewer";
@@ -719,6 +722,7 @@ type PortalView =
   | "events"
   | "crafting"
   | "calculators"
+  | "gear"
   | "guides"
   | "members"
   | "mounts"
@@ -1220,6 +1224,7 @@ const discordCommandOptions = [
   { name: "character", label: "Additional Characters", description: "Find and claim another FFXIV character." },
   { name: "craftmacro", label: "Crafting Macros", description: "Generate crafting macros and save crafter stats." },
   { name: "chocobocolor", label: "Chocobo Color", description: "Calculate a private fruit feeding order for a target plumage color." },
+  { name: "gear", label: "Gear Planner", description: "Calculate level-safe equipment, prices and shopping stops." },
   { name: "map", label: "Treasure Map Identification", description: "Privately identify an attached treasure-map screenshot." },
   { name: "planevent", label: "Plan Event", description: "Create an FC duty run or farm-party plan." },
   { name: "events", label: "Events", description: "Show upcoming FC events." },
@@ -1326,6 +1331,7 @@ const memberNavItems: PortalNavItem[] = [
   { label: "Anime Calendar", icon: "\u25B6", view: "anime" },
   { label: "Crafting & Gathering", icon: "\u2692", view: "crafting" },
   { label: "Tools & Calculators", icon: "\u2699", view: "calculators" },
+  { label: "Gear Planner", icon: "\u26E8", view: "gear" },
   { label: "Guides & Resources", icon: "\u263D", view: "guides" },
   { label: "Members", icon: "\u2662", view: "members" },
   { label: "Collections", icon: "\u2726", view: "mounts" },
@@ -12326,6 +12332,11 @@ export default async function HomePage({
   managedMountVisibility?: string;
   managedMountOverride?: string;
   craftProject?: string;
+  craftTab?: string;
+  craftItems?: string;
+  macroItem?: string;
+  macroRecipe?: string;
+  macroGoal?: string;
   craftPhase?: string;
   craftingTab?: string;
   calculator?: string;
@@ -12397,6 +12408,7 @@ export default async function HomePage({
     "events",
     "crafting",
     "calculators",
+    "gear",
     "guides",
     "members",
     "mounts",
@@ -12418,6 +12430,7 @@ export default async function HomePage({
   let activeView: PortalView = validPortalViews.includes(normalizedRequestedView as PortalView)
     ? (normalizedRequestedView as PortalView)
     : (validPortalViews.includes(preferredLandingView as PortalView) ? preferredLandingView as PortalView : "home");
+  const activeCraftTab = getSearchParam("craftTab") || (getSearchParam("craftProject") ? "workshop" : "planner");
   const activeCalculator = getSearchParam("calculator") || "crafting";
 
   const requestedGalleryCategory = getSearchParam("gallery");
@@ -12565,7 +12578,7 @@ const buildMountTrackerHref = (mountSetId?: number | null, anchor = "mounts") =>
     ...settings.additionalAdminDiscordIds.split(",").map((value) => value.trim()).filter(Boolean),
   ]);
   const canShowDiscordInvite = Boolean(settings.discordInviteUrl) && (settings.discordInvitePublic || canAccessMemberContent);
-  const craftingWorkshopData = canAccessMemberContent && activeView === "crafting"
+  const craftingWorkshopData = canAccessMemberContent && activeView === "crafting" && activeCraftTab === "workshop"
     ? await getCraftingWorkshopDashboard({
         projectId: Number.isFinite(selectedCraftingProjectId) && selectedCraftingProjectId > 0 ? selectedCraftingProjectId : undefined,
         phaseNumber: Number.isFinite(selectedCraftingPhaseNumber) && selectedCraftingPhaseNumber > 0 ? selectedCraftingPhaseNumber : undefined
@@ -12866,7 +12879,7 @@ const buildMountTrackerHref = (mountSetId?: number | null, anchor = "mounts") =>
 
       <ResponsiveSidebar logoUrl={settings.logoUrl} portalName={installationPortalName} portalSubtitle={installationPortalSubtitle}>
         <nav className="side-nav" aria-label="Guild navigation">
-          {navItems.map((item) => (["gallery", "mounts", "minions", "calculators"].includes(item.view)) ? (
+          {navItems.map((item) => (["gallery", "mounts", "minions", "calculators", "crafting"].includes(item.view)) ? (
             <details key={item.label} data-nav-key={item.view} className={`side-nav-submenu ${(item.label === "Collections" ? ["mounts","minions","titles","achievements"].includes(activeView) : item.view === activeView) ? "active" : ""}`} open={item.label === "Collections" ? ["mounts","minions","titles","achievements"].includes(activeView) : item.view === activeView}>
               <summary>
                 <span className="nav-icon">{item.icon}</span>
@@ -12880,6 +12893,12 @@ const buildMountTrackerHref = (mountSetId?: number | null, anchor = "mounts") =>
                     <a href="/?view=minions&minionTab=collection" className={activeView === "minions" ? "active" : ""}>Minions</a>
                     <a href="/?view=titles" className={activeView === "titles" ? "active" : ""}>Titles</a>
                     <a href="/?view=achievements" className={activeView === "achievements" ? "active" : ""}>Achievements</a>
+                  </>
+                ) : item.view === "crafting" ? (
+                  <>
+                    <a href="/?view=crafting&craftTab=planner" className={activeView === "crafting" && activeCraftTab === "planner" ? "active" : ""} aria-current={activeView === "crafting" && activeCraftTab === "planner" ? "page" : undefined}>Craft Planner</a>
+                    <a href="/?view=crafting&craftTab=gathering" className={activeView === "crafting" && activeCraftTab === "gathering" ? "active" : ""} aria-current={activeView === "crafting" && activeCraftTab === "gathering" ? "page" : undefined}>Timed Gathering</a>
+                    <a href="/?view=crafting&craftTab=workshop" className={activeView === "crafting" && activeCraftTab === "workshop" ? "active" : ""} aria-current={activeView === "crafting" && activeCraftTab === "workshop" ? "page" : undefined}>Workshop &amp; Requests</a>
                   </>
                 ) : item.view === "calculators" ? (
                   <>
@@ -13206,7 +13225,10 @@ const buildMountTrackerHref = (mountSetId?: number | null, anchor = "mounts") =>
         ) : null}
         {canAccessMemberContent && activeView === "crafting" ? (
 <section id="crafting" className="section-block" hidden={activeView !== "crafting"}>
-  {craftingWorkshopData ? (
+  <div className="calculator-tabs"><a href="/?view=crafting&craftTab=planner" className={activeCraftTab==="planner"?"active":""}>Craft Planner</a><a href="/?view=crafting&craftTab=gathering" className={activeCraftTab==="gathering"?"active":""}>Timed Gathering</a><a href="/?view=crafting&craftTab=workshop" className={activeCraftTab==="workshop"?"active":""}>Workshop &amp; Requests</a></div>
+  {activeCraftTab==="planner" && <PersonalCraftPlanner userKey={String(session?.user?.discordUserId || "member")} initialTargets={getSearchParam("craftItems") || ""} />}
+          {activeCraftTab==="gathering" && <TimedGathering userKey={String(session?.user?.discordUserId || "member")} />}
+  {activeCraftTab==="workshop" && craftingWorkshopData ? (
     <>
       <div className="section-title-row"><div><p className="eyebrow">FC project board</p><h2>Workshop Projects &amp; Craft Requests</h2><p>Coordinate workshop materials, shared claims, gathering needs, contributions, and member craft requests.</p></div></div>
       <CraftingWorkshopView
@@ -13225,10 +13247,13 @@ const buildMountTrackerHref = (mountSetId?: number | null, anchor = "mounts") =>
   ) : null}
 </section>
 ) : null}
+        {canAccessMemberContent && activeView === "gear" ? (
+          <section id="gear" className="section-block"><GearPlanner /></section>
+        ) : null}
         {canAccessMemberContent && activeView === "calculators" ? (
           <section id="calculators" className="section-block">
             <div className="section-title-row"><div><p className="eyebrow">Member tools</p><h2>Tools &amp; Calculators</h2><p>Plan crafts, identify treasure maps, adjust chocobo colors, optimize squadron missions and submarine builds, and track other long-term goals.</p></div></div>
-            <PortalCalculators initial={activeCalculator} />
+            <PortalCalculators initial={activeCalculator} craftItem={Number(getSearchParam("macroItem")) || 0} craftRecipe={Number(getSearchParam("macroRecipe")) || 0} craftGoal={getSearchParam("macroGoal") || ""} />
           </section>
         ) : null}
         <section id="guides" className="section-block" hidden={activeView !== "guides"}>

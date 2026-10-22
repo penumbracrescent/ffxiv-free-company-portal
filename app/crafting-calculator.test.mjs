@@ -18,7 +18,7 @@ test("crafting calculator imports simulation-ready recipes and stat consumables"
   assert.match(worker, /async function fetchCraftingItemFoodRows\(itemFoodIds\)/);
   assert.match(worker, /message\.includes\("404 Not Found"\)/);
   assert.match(worker, /Skipping missing XIVAPI ItemFood row/);
-  assert.match(worker, /CRAFTING_CATALOG_SCHEMA_VERSION = 7/);
+  assert.match(worker, /CRAFTING_CATALOG_SCHEMA_VERSION = 8/);
   assert.match(worker, /fetchCraftingConsumableItems/);
   assert.match(worker, /ItemAction\.Data\[0\]=48 ItemAction\.Data\[0\]=49/);
   assert.match(schema, /portal_crafting_consumables/);

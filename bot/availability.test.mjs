@@ -48,10 +48,9 @@ test("availability refresh queries safely quote the day alias and offer retry", 
   assert.match(availability, /Re-enter Times/);
 });
 
-test("saving reusable availability only attaches it to plans the member explicitly joined", () => {
-  assert.match(availability, /portal_event_plan_interest i set availability_source='saved'/);
-  assert.match(availability, /i\.discord_user_id=\$1 and i\.status='interested'/);
-  assert.match(availability, /p\.status='collecting'/);
+test("saving reusable availability does not confirm event-specific planning requests", () => {
+  assert.doesNotMatch(availability, /portal_event_plan_interest i set availability_source='saved'/);
+  assert.match(eventCommand, /availability_source='plan',availability_confirmed_at=now\(\)/);
 });
 
 test("plan-only Discord availability supports two periods and refreshes the shared post", () => {
@@ -64,14 +63,16 @@ test("plan-only Discord availability supports two periods and refreshes the shar
   assert.match(bot, /processEventPlanSyncs\(pool, bot\)/);
 });
 
-test("Discord plan availability uses a staged day-by-day weekly editor", () => {
+test("Discord plan availability uses one staged editor limited to possible event days", () => {
   assert.match(eventCommand, /portal_event_plan_availability_drafts/);
   assert.match(eventCommand, /Not entered/);
   assert.match(eventCommand, /Not available/);
   assert.match(eventCommand, /Copy These Hours to Days/);
   assert.match(eventCommand, /Mark Day Unavailable/);
   assert.match(eventCommand, /Save Availability/);
-  assert.match(eventCommand, /Nothing replaces your current plan availability until/);
+  assert.match(eventCommand, /confirms your availability for this planning request only/);
+  assert.match(eventCommand, /summary=\[\.\.\.candidates\.keys\(\)\]/);
+  assert.match(eventCommand, /action==='interest'\|\|action==='availability'/);
   assert.match(eventCommand, /action==='copy-target'/);
   assert.match(eventCommand, /action==='cancel-draft'/);
 });

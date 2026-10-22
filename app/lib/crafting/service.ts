@@ -443,6 +443,7 @@ export async function deleteCraftingWorkshopProject(actor: CraftingActor, formDa
 export type CraftingCatalogSearchItem = {
   id: number;
   name: string;
+  iconUrl: string | null;
   category: string | null;
   level: number | null;
   itemLevel: number | null;
@@ -459,11 +460,12 @@ export async function searchCraftingCatalogItems(rawQuery: string): Promise<Craf
   try {
     if (!craftingCatalogSearchCache || Date.now() - craftingCatalogSearchCache.loadedAt > CRAFTING_CATALOG_SEARCH_CACHE_MS) {
       const result = await client.query<CraftingCatalogSearchItem>(`
-      select id::int, name, category, level, "itemLevel"
+      select id::int, name, "iconUrl", category, level, "itemLevel"
       from (
         select distinct on (i.id)
           i.id,
           i.name,
+          i.icon_url as "iconUrl",
           r.craft_job as category,
           nullif(r.class_job_level, 0)::int as level,
           nullif(i.item_level, 0)::int as "itemLevel"
@@ -504,7 +506,7 @@ function normalizeCraftJob(job: unknown) {
   return CRAFT_JOB_ALIASES[value] || value;
 }
 
-export async function getCraftingCalculatorData(itemId: number): Promise<CraftingCalculatorData | null> {
+export async function getCraftingCalculatorData(itemId: number, recipeId?: number): Promise<CraftingCalculatorData | null> {
   if (!Number.isFinite(itemId) || itemId <= 0) return null;
   const client = clientForCrafting(); await client.connect();
   try {
@@ -516,8 +518,8 @@ export async function getCraftingCalculatorData(itemId: number): Promise<Craftin
       coalesce(r.required_control,0)::int as "requiredControl", coalesce(r.required_quality,0)::int as "requiredQuality",
       coalesce(r.stars,0)::int as stars, r.can_hq as "canHq", r.is_expert as expert, r.is_collectable as collectable
       from portal_crafting_recipes r join portal_crafting_items i on i.id=r.output_item_id
-      where r.output_item_id=$1 and r.source_kind='xivapi' and r.durability>0 and r.difficulty>0 and r.progress_divider>0 and r.quality_divider>0
-      order by r.preferred desc, r.xivapi_id asc limit 1;`, [itemId]);
+      where r.output_item_id=$1 and ($2::bigint is null or r.id=$2) and r.source_kind='xivapi' and r.durability>0 and r.difficulty>0 and r.progress_divider>0 and r.quality_divider>0
+      order by r.preferred desc, r.xivapi_id asc limit 1;`, [itemId, recipeId || null]);
     if (!recipe.rows[0]) return null;
     const consumables = await client.query(`select i.id::int, i.name, i.icon_url as "iconUrl", c.consumable_type as type, i.can_be_hq as "canBeHq", c.bonuses
       from portal_crafting_consumables c join portal_crafting_items i on i.id=c.item_id

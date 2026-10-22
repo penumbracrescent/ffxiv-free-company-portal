@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node src/index.mjs",
     "sync": "node src/cli.mjs sync",
-    "test": "node --test"
+    "test": "node --import ./test-support/env.mjs --test"
   },
   "dependencies": {
     "pg": "^8.13.1"

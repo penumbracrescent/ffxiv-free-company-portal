@@ -52,17 +52,19 @@ test("tentative event plans count only explicitly interested members", () => {
   assert.match(eventPlanBoard, /Interested with availability/);
   assert.match(eventPlanBoard, /Interested, availability needed/);
   assert.match(eventPlanBoard, /Withdrawn/);
-  assert.match(eventPlanBoard, /Set Event-Specific Hours/);
-  assert.match(eventPlanBoard, /Change Event-Specific Hours/);
-  assert.match(eventPlans, /availability_source=case when portal_event_plan_interest\.availability_source='plan'/);
+  assert.match(eventPlanBoard, /I&apos;m Interested \/ Add Availability/);
+  assert.match(eventPlanBoard, /Change Availability/);
+  assert.match(eventPlans, /markEventPlanInterest/);
 });
 
 test("the site reloads event-specific hours saved through Discord", () => {
   assert.match(eventPlans, /current_plan_availability_windows/);
   assert.match(eventPlans, /portal_event_plan_availability_windows w where w\.plan_id=p\.id and w\.discord_user_id=\$1/);
   assert.match(eventPlanBoard, /usesPlanHours\?plan\.current_plan_availability_windows:undefined/);
-  assert.match(panel, /Your existing event-specific hours are loaded below/);
-  assert.match(panel, /setWindows\(Array\.isArray\(detail\.windows\)\?detail\.windows:\[\]\)/);
+  assert.match(panel, /These hours confirm you for this request only/);
+  assert.match(panel, /candidateDays\.has\(window\.day\)/);
+  assert.match(panel, /Save Event Availability/);
+  assert.doesNotMatch(panel, /Update Saved Schedule & Use It/);
 });
 
 test("planning destinations use the member's Discord channel permissions and default to Party Planner", () => {

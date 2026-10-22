@@ -3,6 +3,7 @@
 // =========================
 
 import pg from "pg";
+import {syncAcquisitionSources} from "./acquisition-sources.mjs";
 import * as cheerio from "cheerio";
 import { createHmac } from "node:crypto";
 import { ensureAchievementCollectionTables, syncAchievementAndTitleCatalogIfDue, syncCharacterAchievementsIfDue } from "./achievement-collections.mjs";
@@ -63,7 +64,7 @@ const CRAFTING_CATALOG_MAX_RECIPES = Number.parseInt(
   process.env.CRAFTING_CATALOG_MAX_RECIPES || "0",
   10
 );
-const CRAFTING_CATALOG_SCHEMA_VERSION = 7;
+const CRAFTING_CATALOG_SCHEMA_VERSION = 8;
 const CRAFTING_WORKSHOP_SYNC_INTERVAL_HOURS = Number.parseInt(
   process.env.CRAFTING_WORKSHOP_SYNC_INTERVAL_HOURS || "168",
   10
@@ -93,7 +94,7 @@ const CRAFTING_RECIPE_XIVAPI_FIELDS = [
   "AmountIngredient",
   "AmountResult",
   "CanHq",
-  "CollectableMetadata@as(raw)",
+  "ItemResult.IsCollectable",
   "CraftType.Name",
   "DifficultyFactor",
   "DurabilityFactor",
@@ -3051,6 +3052,7 @@ function normalizeCraftingRecipeRow(row) {
 
   const level = fields.RecipeLevelTable?.fields || fields.RecipeLevelTable || {};
   const scaled = (base, factor) => Math.floor((Number(base) || 0) * (Number(factor) || 100) / 100);
+  if (typeof fields.ItemResult?.fields?.IsCollectable !== "boolean") throw new Error("Recipe output collectability is unverified; catalog update aborted.");
 
   return {
     xivapiId,
@@ -3073,7 +3075,7 @@ function normalizeCraftingRecipeRow(row) {
     stars: Number(level.Stars) || 0,
     canHq: Boolean(fields.CanHq),
     isExpert: Boolean(fields.IsExpert),
-    isCollectable: Boolean(Number(fields["CollectableMetadata@as(raw)"]) > 0),
+    isCollectable: fields.ItemResult?.fields?.IsCollectable === true,
     ingredients: [...ingredientsByItem.entries()].map(([itemXivapiId, quantity]) => ({
       itemXivapiId,
       quantity
@@ -3418,7 +3420,7 @@ async function syncCraftingCatalogIfDue(client) {
     try {
       counts = await persistCraftingCatalog(client, recipes, itemsByXivapiId, consumableBonusesById);
       await client.query(`update portal_crafting_catalog_sync_state set last_successful_sync_at = now(), catalog_version = $1, source_version = $2, last_error = null, updated_at = now() where id = 1;`, [CRAFTING_CATALOG_SCHEMA_VERSION, sourceVersion]);
-      await client.query(`update portal_crafting_source_sync_state set last_successful_sync_at = null, last_error = null, updated_at = now() where source_key = 'gathering';`);
+      await client.query(`update portal_crafting_source_sync_state set last_successful_sync_at = null, last_error = null, updated_at = now() where source_key in ('gathering','gathering_acquisition_v3','teamcraft_sources_v2');`);
       await client.query("commit");
     } catch (error) {
       await client.query("rollback");
@@ -3726,99 +3728,7 @@ function gatheringPointLocation(fields) {
 }
 
 async function syncGatheringSourcesIfDue(client) {
-  const state = await client.query(`select last_successful_sync_at from portal_crafting_source_sync_state where source_key = 'gathering';`);
-  const stateRow = state.rows[0];
-  const lastSuccessful = stateRow?.last_successful_sync_at ? new Date(stateRow.last_successful_sync_at) : null;
-  const intervalMs = Math.max(CRAFTING_CATALOG_SYNC_INTERVAL_HOURS || 168, 1) * 60 * 60 * 1000;
-  if (lastSuccessful && Date.now() - lastSuccessful.getTime() < intervalMs) {
-    return "Gathering source data is current.";
-  }
-
-  await client.query(`update portal_crafting_source_sync_state set last_attempt_at = now(), last_error = null, updated_at = now() where source_key = 'gathering';`);
-  try {
-    const [baseRows, pointRows] = await Promise.all([
-      fetchAllXivapiSheetRows("GatheringPointBase", GATHERING_POINT_BASE_XIVAPI_FIELDS),
-      fetchAllXivapiSheetRows("GatheringPoint", GATHERING_POINT_XIVAPI_FIELDS)
-    ]);
-    const baseItems = new Map();
-    for (const row of baseRows) {
-      const baseId = toPositiveInteger(row?.row_id);
-      const fields = row?.fields || {};
-      const gatheringType = getXivapiRelationshipName(fields.GatheringType) || "Gathering";
-      const itemIds = Array.isArray(fields["Item@as(raw)"])
-        ? [...new Set(fields["Item@as(raw)"].map((itemId) => toPositiveInteger(itemId)).filter(Boolean))]
-        : [];
-      if (baseId && itemIds.length) baseItems.set(baseId, { gatheringType, itemIds });
-    }
-
-    const pointsByBase = new Map();
-    for (const row of pointRows) {
-      const pointId = toPositiveInteger(row?.row_id);
-      const fields = row?.fields || {};
-      const baseId = toPositiveInteger(fields["GatheringPointBase@as(raw)"]);
-      const location = gatheringPointLocation(fields);
-      if (!pointId || !baseId || !location) continue;
-      const points = pointsByBase.get(baseId) ?? [];
-      points.push({ pointId, location });
-      pointsByBase.set(baseId, points);
-    }
-
-    const itemXivapiIds = [...new Set([...baseItems.values()].flatMap((entry) => entry.itemIds))];
-    const databaseItems = itemXivapiIds.length
-      ? await client.query(`select id::int, xivapi_id::int from portal_crafting_items where xivapi_id = any($1::int[]);`, [itemXivapiIds])
-      : { rows: [] };
-    const databaseItemIdByXivapiId = new Map(databaseItems.rows.map((row) => [row.xivapi_id, row.id]));
-    const sourceByKey = new Map();
-    for (const [baseId, base] of baseItems) {
-      const uniquePoints = new Map((pointsByBase.get(baseId) ?? []).map((point) => [point.location, point]));
-      for (const itemXivapiId of base.itemIds) {
-        const itemId = databaseItemIdByXivapiId.get(itemXivapiId);
-        if (!itemId) continue;
-        for (const point of uniquePoints.values()) {
-          const externalKey = `xivapi_gathering_${baseId}_${itemXivapiId}_${point.location.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
-          sourceByKey.set(externalKey, { itemId, externalKey, name: base.gatheringType, location: point.location, pointId: point.pointId, baseId });
-        }
-      }
-    }
-    const sources = [...sourceByKey.values()];
-
-    await client.query("begin");
-    try {
-      for (const chunk of chunkValues(sources, 500)) {
-        await client.query(`
-          insert into portal_crafting_item_sources
-            (item_id, external_key, source_type, source_name, location_name, details, source_kind, last_synced_at, updated_at)
-          select item_id, external_key, 'gathering', source_name, location_name, details::jsonb, 'xivapi', now(), now()
-          from unnest($1::bigint[], $2::text[], $3::text[], $4::text[], $5::text[])
-            as data(item_id, external_key, source_name, location_name, details)
-          on conflict (external_key) do update set
-            item_id = excluded.item_id,
-            source_type = 'gathering',
-            source_name = excluded.source_name,
-            location_name = excluded.location_name,
-            details = excluded.details,
-            source_kind = 'xivapi',
-            last_synced_at = now(),
-            updated_at = now();`, [
-          chunk.map((source) => source.itemId),
-          chunk.map((source) => source.externalKey),
-          chunk.map((source) => source.name),
-          chunk.map((source) => source.location),
-          chunk.map((source) => JSON.stringify({ gatheringPointId: source.pointId, gatheringPointBaseId: source.baseId }))
-        ]);
-      }
-      await client.query(`update portal_crafting_source_sync_state set last_successful_sync_at = now(), last_error = null, updated_at = now() where source_key = 'gathering';`);
-      await client.query("commit");
-    } catch (error) {
-      await client.query("rollback");
-      throw error;
-    }
-    return `Gathering source sync complete. Sources: ${sources.length}. Zones: ${new Set(sources.map((source) => source.location)).size}.`;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    await client.query(`update portal_crafting_source_sync_state set last_error = $1, updated_at = now() where source_key = 'gathering';`, [message]);
-    throw error;
-  }
+  return syncAcquisitionSources(client,{fetchJson,intervalHours:CRAFTING_CATALOG_SYNC_INTERVAL_HOURS,baseUrl:process.env.TEAMCRAFT_DATA_BASE_URL||undefined});
 }
 async function syncTeamcraftSourcesIfDue(client) {
   const key = "teamcraft_sources_v2";
@@ -3831,7 +3741,7 @@ async function syncTeamcraftSourcesIfDue(client) {
     const ids = new Map(db.rows.map(row => [row.xivapi_id, row.id]));
     if (!ids.size) return "Vendor and monster-drop sources are waiting for the crafting catalog.";
     const get = async (file) => fetchJson(`${TEAMCRAFT_DATA_BASE_URL}/${file}`);
-    const [shops,npcs,places,drops,mobs,monsters] = await Promise.all([get("shops.json"),get("npcs.json"),get("places.json"),get("drop-sources.json"),get("mobs.json"),get("monsters.json")]);
+    const [shops,npcs,places] = await Promise.all([get("shops.json"),get("npcs.json"),get("places.json")]);
     const place = (zoneId) => String(places?.[String(zoneId)]?.en || "").trim() || null;
     const coordinate = (value) => { const parsed = Number(value); return Number.isFinite(parsed) ? Math.round(parsed * 10) / 10 : null; };
     const source = new Map();
@@ -3847,16 +3757,8 @@ async function syncTeamcraftSourcesIfDue(client) {
         }
       }
     }
-    for (const [rawItemId,list] of Object.entries(drops || {})) {
-      const xivapiId=toPositiveInteger(rawItemId),itemId=xivapiId ? ids.get(xivapiId) : null;if(!itemId || !Array.isArray(list)) continue;
-      for (const rawMonsterId of list) {
-        const monsterId=toPositiveInteger(rawMonsterId);if(!monsterId)continue;const name=String(mobs?.[String(monsterId)]?.en||"").trim()||"Unknown monster",positions=Array.isArray(monsters?.[String(monsterId)]?.positions)?monsters[String(monsterId)].positions:[],zones=new Map();
-        for(const position of positions){const zoneId=toPositiveInteger(position?.zoneid),location=place(zoneId);if(zoneId&&location)zones.set(zoneId,{zoneId,location,level:toPositiveInteger(position?.level)||null});}if(!zones.size)zones.set(0,{zoneId:null,location:null,level:null});
-        for(const zone of zones.values()){const externalKey=`teamcraft_monster_${xivapiId}_${monsterId}_${zone.zoneId||0}`;source.set(externalKey,{itemId,externalKey,type:"other",name:`Monster drop: ${name}`,location:zone.location,details:{monsterId,zoneId:zone.zoneId,level:zone.level}});}
-      }
-    }
     const all=[...source.values()];await client.query("begin");try{for(const chunk of chunkValues(all,500))await client.query(`insert into portal_crafting_item_sources(item_id,external_key,source_type,source_name,location_name,details,source_kind,last_synced_at,updated_at) select item_id,external_key,source_type,source_name,location_name,details::jsonb,'teamcraft',now(),now() from unnest($1::bigint[],$2::text[],$3::text[],$4::text[],$5::text[],$6::text[]) as data(item_id,external_key,source_type,source_name,location_name,details) on conflict(external_key) do update set item_id=excluded.item_id,source_type=excluded.source_type,source_name=excluded.source_name,location_name=excluded.location_name,details=excluded.details,source_kind='teamcraft',last_synced_at=now(),updated_at=now()`,[chunk.map(s=>s.itemId),chunk.map(s=>s.externalKey),chunk.map(s=>s.type),chunk.map(s=>s.name),chunk.map(s=>s.location),chunk.map(s=>JSON.stringify(s.details))]);await client.query(`update portal_crafting_source_sync_state set last_successful_sync_at=now(),last_error=null,updated_at=now() where source_key=$1`,[key]);await client.query("commit");}catch(error){await client.query("rollback");throw error;}
-    const vendors=all.filter(s=>s.type==="vendor").length;return `Vendor and monster-drop source sync complete. Vendors: ${vendors}. Monster drops: ${all.length-vendors}.`;
+    return `Vendor source sync complete. Vendors: ${all.length}.`;
   }catch(error){const message=error instanceof Error?error.message:String(error);await client.query(`update portal_crafting_source_sync_state set last_error=$1,updated_at=now() where source_key=$2`,[message,key]);throw error;}
 }
 // =========================

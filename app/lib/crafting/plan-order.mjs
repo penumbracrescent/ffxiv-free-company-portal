@@ -1,0 +1,7 @@
+export function chooseRecipes(recipes,overrides={}){const map=new Map();for(const r of recipes){const prev=map.get(r.outputItemId);if(!prev||r.id===Number(overrides[r.outputItemId])||(!overrides[r.outputItemId]&&r.preferred))map.set(r.outputItemId,r);}return map;}
+export function craftStages(rows,recipes,overrides={}){
+ const chosen=chooseRecipes(recipes,overrides),stages=new Map(),visiting=new Set();
+ function depth(id){if(stages.has(id))return stages.get(id);if(visiting.has(id))throw Error('A recipe cycle prevents safe ordering.');const r=chosen.get(id);if(!r)return 0;visiting.add(id);const d=1+Math.max(0,...r.ingredients.map(i=>depth(i.itemId)));visiting.delete(id);stages.set(id,d);return d;}
+ const groups=new Map();for(const row of rows.filter(r=>!r.isRaw&&r.remaining>0)){const r=chosen.get(row.itemId),stage=depth(row.itemId),key=stage+' · '+(r?.job||'Unknown crafter');if(!groups.has(key))groups.set(key,{key,stage,job:r?.job||'Unknown crafter',rows:[]});groups.get(key).rows.push({...row,recipe:r});}return [...groups.values()].sort((a,b)=>a.stage-b.stage||a.job.localeCompare(b.job));
+}
+export function gearTargets(rows){const map=new Map();for(const r of rows){if(r.blocked||r.owned||!r.item?.craftPlanId)continue;const id=r.item.craftPlanId;map.set(id,{id,name:r.item.name,quantity:(map.get(id)?.quantity||0)+1,hq:(map.get(id)?.hq||0)+(r.quality==='HQ'?1:0)});}return [...map.values()];}

@@ -1,0 +1,1 @@
+export function marker(x,y,size){if(x==null||y==null||!Number.isFinite(Number(size))||Number(size)<=0)return null;const left=(Number(x)-1)*Number(size)/41,top=(Number(y)-1)*Number(size)/41;return Number.isFinite(left)&&Number.isFinite(top)&&left>=0&&left<=100&&top>=0&&top<=100?{left,top}:null;}

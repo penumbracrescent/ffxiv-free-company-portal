@@ -5,18 +5,20 @@
   "private": true,
   "packageManager": "pnpm@11.19.0",
   "scripts": {
+    "test:solo-workshop": "node --test solo-workshop.test.mjs workshop-tree.test.mjs",
+    "test:auth": "node --test discord-issuer.test.mjs",
     "build": "next build",
     "start": "next start",
     "dev": "next dev",
-    "test": "node --test polls-events.test.mjs alt-character-claims.test.mjs schema-order.test.mjs guide-library.test.mjs migration-backup.test.mjs reboot-resilience.test.mjs browser-restore.test.mjs portal-branding.test.mjs setup-location.test.mjs mount-character-details.test.mjs mount-tracker-layout.test.mjs achievement-title-collections.test.mjs privacy-self-service.test.mjs mount-win-announcements.test.mjs anime-discord-events.test.mjs crafting-calculator.test.mjs officer-interactions.test.mjs availability.test.mjs responsive-navigation.test.mjs"
+    "test": "node --test polls-events.test.mjs alt-character-claims.test.mjs schema-order.test.mjs guide-library.test.mjs migration-backup.test.mjs reboot-resilience.test.mjs browser-restore.test.mjs portal-branding.test.mjs setup-location.test.mjs mount-character-details.test.mjs mount-tracker-layout.test.mjs achievement-title-collections.test.mjs privacy-self-service.test.mjs mount-win-announcements.test.mjs anime-discord-events.test.mjs crafting-calculator.test.mjs officer-interactions.test.mjs availability.test.mjs responsive-navigation.test.mjs gear-planner.test.mjs gear-layout.test.mjs personal-craft-plan.test.mjs acquisition-sources.test.mjs solo-workshop.test.mjs workshop-tree.test.mjs"
   },
   "dependencies": {
     "@ffxiv-teamcraft/simulator": "3.7.3",
-    "next": "16.3.3",
+    "next": "16.4.2",
     "next-auth": "beta",
     "pg": "^8.13.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "19.2.9",
+    "react-dom": "19.2.9"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -42,8 +42,8 @@ export async function cleanup(config) {
 async function sourceFetchContext(source, config) {
   if (source.key !== "animeschedule") return {};
   const result = await pool.query(`select source_route from anime.series
-    where source_route is not null and description is not null
-      and description_updated_at > now()-($1::text || ' days')::interval;`,
+    where source_route is not null
+      and metadata_updated_at > now()-($1::text || ' days')::interval;`,
   [String(config.descriptionRefreshDays)]);
   return { freshDescriptionRoutes: new Set(result.rows.map((row) => row.source_route).filter(Boolean)) };
 }

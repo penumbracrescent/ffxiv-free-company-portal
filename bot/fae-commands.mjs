@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import { createHmac } from "node:crypto";
 import { addShareCommandGroup } from "./share-commands.mjs";
+import {addGearCommand,gearReply} from "./gear-command.mjs";
 import { addTreasureMapCommand } from "./treasure-maps.mjs";
 import { DISCORD_COMMAND_NAME, GUILD_NAME, PORTAL_ACCENT_COLOR, PORTAL_URL } from "./installation-config.mjs";
 
@@ -10,13 +11,14 @@ const ANIME_TIMEZONE = String(process.env.ANIME_TIMEZONE || "America/Chicago").t
 const ANIME_DAY_LIMIT = 30;
 const ACTIVE_GIVEAWAYS = ["open", "submissions_open", "submissions_closed", "voting_open", "voting_closed", "awaiting_claim"];
 export const FAE_REQUIRED_COMMANDS = new Set(["help", "about", "privacy", "officer"]);
-export const FAE_DISABLEABLE_COMMANDS = new Set(["me", "status", "character", "craftmacro", "chocobocolor", "map", "planevent", "availability", "events", "animeschedule", "giveaways", "entries", "mounts", "minions", "mountalerts", "share", "links"]);
+export const FAE_DISABLEABLE_COMMANDS = new Set(["me", "status", "character", "craftmacro", "chocobocolor", "gear", "map", "planevent", "availability", "events", "animeschedule", "giveaways", "entries", "mounts", "minions", "mountalerts", "share", "links"]);
 const FAE_HELP_ITEMS = [
   ["me", "your linked-character overview"],
   ["status", "portal connection status"],
   ["character", "find and claim an additional character"],
   ["craftmacro", "generate a members-only reply and save crafter stats"],
   ["chocobocolor", "plan a private chocobo fruit feeding order"],
+  ["gear", "calculate level-safe equipment prices and shopping stops"],
   ["map", "privately identify a treasure-map screenshot"],
   ["planevent", "schedule a duty run or farm party"],
   ["availability", "set or review your weekly event availability"],
@@ -126,6 +128,7 @@ export function buildFaeCommand(){
   for(const [name,description] of [["help",`Show the available /${DISCORD_COMMAND_NAME} commands.`],["me","Show your personal portal overview."],["status","Check your portal connection status."],["character","Find and claim an additional FFXIV character."],["planevent","Schedule an FC duty run or farm party."],["availability","Set or review your weekly event availability."],["events","Show upcoming FC events."],["animeschedule","Browse the anime release schedule by day."],["giveaways","Show active giveaways and contests."],["entries","Show your giveaway and contest activity."],["mounts","Browse your tracked mount collection."],["minions","Browse your minion collection and sources."],["mountalerts","View or change mount-win notifications."],["links","Open useful portal pages."],["about","Learn what the FC bot handles."],["privacy","See what data these commands use."]]) command.addSubcommand(sub=>sub.setName(name).setDescription(description));
   command.addSubcommand(sub=>sub.setName("craftmacro").setDescription("Generate an ephemeral macro and save the entered crafter stats.").addStringOption(option=>option.setName("recipe").setDescription("Craftable item").setRequired(true).setAutocomplete(true)).addStringOption(option=>option.setName("goal").setDescription("What the macro should accomplish").addChoices({name:"Maximum quality / collectability",value:"max"},{name:"Completion only",value:"complete"})));
   command.addSubcommand(sub=>sub.setName("chocobocolor").setDescription("Calculate a private chocobo fruit feeding plan.").addStringOption(option=>option.setName("current").setDescription("Current plumage color").setRequired(true).setAutocomplete(true)).addStringOption(option=>option.setName("target").setDescription("Desired plumage color").setRequired(true).setAutocomplete(true)));
+  addGearCommand(command);
   addTreasureMapCommand(command);
   addShareCommandGroup(command);
   command.addSubcommandGroup(group => group.setName("officer").setDescription("Officer tools")
@@ -259,14 +262,15 @@ function privacy(){return {embeds:[embed(`${GUILD_NAME} — Privacy & Data`,`${G
   {name:"Your choices",value:"Download your own data, switch to verification-only mode, or fully opt out under Member Settings → Data & Privacy. Full opt-out removes portal-managed roles and nickname; returning requires explicit opt-in and fresh verification."},
   {name:"How it is used",value:`FFXIV collection information comes from publicly accessible sources. Discord and portal information is used to provide ${GUILD_NAME} features and administration.`}
   )],components:[row(link("Manage My Data","?view=settings#data-privacy"),link("Privacy Policy","privacy"),link("Terms","terms")),row(new ButtonBuilder().setCustomId("fae:about").setStyle(ButtonStyle.Secondary).setLabel("About the Bot"))]};}
-async function payload(interaction,pool){const name=interaction.options.getSubcommand();if(!await isFaeCommandEnabled(pool,name))return disabledFaeCommandReply(name);if(name==="help")return help(pool);if(name==="me")return me(pool,interaction.user.id);if(name==="status")return status(pool,interaction);if(name==="events")return events(pool);if(name==="animeschedule")return animeSchedule(pool);if(name==="giveaways")return giveaways(pool);if(name==="entries")return entries(pool,interaction.user.id);if(name==="mounts")return mountHome(pool,interaction.user.id);if(name==="minions")return minionHome(pool,interaction.user.id);if(name==="mountalerts"){const c=await character(pool,interaction.user.id),stop=blocked(c);return stop||alertPanel(c);}if(name==="links")return links();if(name==="about")return about();if(name==="privacy")return privacy();return help(pool);}
+async function payload(interaction,pool,{isOfficer=false}={}){const name=interaction.options.getSubcommand();if(!await isFaeCommandEnabled(pool,name))return disabledFaeCommandReply(name);if(name==="gear"){const c=await character(pool,interaction.user.id),stop=blocked(c);return stop||gearReply(interaction,c,{isOfficer});}if(name==="help")return help(pool);if(name==="me")return me(pool,interaction.user.id);if(name==="status")return status(pool,interaction);if(name==="events")return events(pool);if(name==="animeschedule")return animeSchedule(pool);if(name==="giveaways")return giveaways(pool);if(name==="entries")return entries(pool,interaction.user.id);if(name==="mounts")return mountHome(pool,interaction.user.id);if(name==="minions")return minionHome(pool,interaction.user.id);if(name==="mountalerts"){const c=await character(pool,interaction.user.id),stop=blocked(c);if(stop)return stop;return alertPanel(c);}if(name==="links")return links();if(name==="about")return about();if(name==="privacy")return privacy();return help(pool);}
 
-export async function handleFaeCommand(interaction,pool,{alreadyDeferred=false}={}){
+export async function canUseGearButtons(pool,interaction){if(!await isFaeCommandEnabled(pool,'gear'))return false;return !blocked(await character(pool,interaction.user.id));}
+export async function handleFaeCommand(interaction,pool,{alreadyDeferred=false,isOfficer=false}={}){
   const startedAt=Date.now(),referenceId=createFaeDiagnosticReference(),commandPath=`/${DISCORD_COMMAND_NAME} ${interaction.options.getSubcommand(false)||"unknown"}`;
   try{
     if(!alreadyDeferred)await interaction.deferReply({flags:MessageFlags.Ephemeral});
     await rememberDiscordDisplayName(pool,interaction);
-    await interaction.editReply(await payload(interaction,pool));
+    await interaction.editReply(await payload(interaction,pool,{isOfficer}));
     await recordFaeDiagnostic(pool,interaction,{referenceId,commandPath,interactionKind:"command",outcome:"success",startedAt});
   }catch(error){
     console.error(`[cotf-bot] ${commandPath} failed (${referenceId}):`,error);

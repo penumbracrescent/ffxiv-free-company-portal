@@ -16,11 +16,11 @@ const tools:{id:Tool;label:string;description:string}[]=[
   {id:"relic",label:"Relic & Currency",description:"Multi-job progress"},
 ];
 
-export default function PortalCalculators({initial="crafting"}:{initial?:string}){
+export default function PortalCalculators({initial="crafting",craftItem=0,craftRecipe=0,craftGoal=""}:{initial?:string;craftItem?:number;craftRecipe?:number;craftGoal?:string}){
   const active=(tools.some(tool=>tool.id===initial)?initial:"crafting") as Tool;
   return <>
     <nav className="calculator-tabs" aria-label="Calculator selection">{tools.map(tool=><a key={tool.id} className={active===tool.id?"active":""} href={`/?view=calculators&calculator=${tool.id}`}><strong>{tool.label}</strong><small>{tool.description}</small></a>)}</nav>
-    {active==="crafting"?<CraftingMacroCalculator/>:active==="chocobo"?<ChocoboCalculator/>:active==="treasure-map"?<TreasureMapGuide/>:active==="squadron"?<SquadronCalculator/>:active==="submarine"?<SubmarineCalculator/>:active==="materia"?<MateriaCalculator/>:active==="gathering"?<GatheringCalculator/>:<RelicCalculator/>}
+    {active==="crafting"?<CraftingMacroCalculator initialItem={craftItem} initialRecipe={craftRecipe} initialGoal={craftGoal}/>:active==="chocobo"?<ChocoboCalculator/>:active==="treasure-map"?<TreasureMapGuide/>:active==="squadron"?<SquadronCalculator/>:active==="submarine"?<SubmarineCalculator/>:active==="materia"?<MateriaCalculator/>:active==="gathering"?<GatheringCalculator/>:<RelicCalculator/>}
   </>;
 }
 

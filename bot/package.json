@@ -7,14 +7,14 @@
   "type": "module",
   "scripts": {
     "start": "node bot.mjs",
-    "test": "node --test polls-events.test.mjs anime-rankings.test.mjs alt-character-claims.test.mjs discord-member-fetch.test.mjs giveaway-rules.test.mjs roster-overrides.test.mjs fc-verification-gates.test.mjs craft-macro.test.mjs chocobo-color.test.mjs discord-command-administration.test.mjs treasure-maps.test.mjs treasure-map-catalog.test.mjs availability.test.mjs"
+    "test": "node --test polls-events.test.mjs anime-rankings.test.mjs alt-character-claims.test.mjs discord-member-fetch.test.mjs giveaway-rules.test.mjs roster-overrides.test.mjs fc-verification-gates.test.mjs craft-macro.test.mjs chocobo-color.test.mjs discord-command-administration.test.mjs treasure-maps.test.mjs treasure-map-catalog.test.mjs availability.test.mjs gear-command.test.mjs gear-command-format.test.mjs gear-share.test.mjs gear-policy.test.mjs gear-adjust.test.mjs"
   },
   "dependencies": {
     "@ffxiv-teamcraft/simulator": "3.7.3",
     "@tesseract.js-data/eng": "1.0.0",
     "discord.js": "^14.26.2",
     "pg": "^8.13.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "tesseract.js": "7.0.0"
   }
 }

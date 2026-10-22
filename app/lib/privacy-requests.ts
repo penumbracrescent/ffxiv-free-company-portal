@@ -4,6 +4,7 @@ import { pollVoterKey } from "./polls/identity";
 import { giveawayVoterKey } from "./giveaways/identity";
 type Queryable=Pick<Client|PoolClient,"query">;
 export const personalDataTargets=[
+  ["portal_timed_devices","owner"],
   ["portal_alt_character_claims","discord_user_id"],["portal_alt_character_limits","discord_user_id"],["portal_alt_character_links","discord_user_id"],["portal_discord_event_drafts","discord_user_id"],
   ["portal_discord_links","discord_user_id"],["portal_discord_member_snapshots","discord_user_id"],["portal_discord_guest_access","discord_user_id"],["portal_discord_roster_review_decisions","discord_user_id"],["portal_discord_action_queue","discord_user_id"],["portal_discord_audit_log","discord_user_id"],["portal_command_diagnostics","discord_user_id"],["portal_member_availability_profiles","discord_user_id"],["portal_member_availability_windows","discord_user_id"],["portal_event_plan_interest","discord_user_id"],["portal_event_plan_availability_windows","discord_user_id"],["portal_event_plan_availability_drafts","discord_user_id"],["portal_member_preferences","discord_user_id"],["portal_crafter_profiles","discord_user_id"],["portal_community_gallery_posts","discord_user_id"],["portal_giveaway_entries","discord_user_id"],["portal_giveaway_submissions","discord_user_id"],["portal_giveaway_votes","voter_discord_user_id"],["portal_crafting_contributions","contributor_discord_user_id"],["portal_crafting_claims","claimant_discord_user_id"],["portal_crafting_activity","actor_discord_user_id"]
 ] as const;

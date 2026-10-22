@@ -43,7 +43,9 @@ test("the private anime schedule command supports bounded day navigation", async
   );
   assert.doesNotMatch(faeDispatch, /result\.privacySuppressed/);
   assert.match(bot, /if \(await isDiscordPrivacySuppressed\(interaction\.user\.id\)\)/);
-  assert.match(bot, /handleFaeCommand\(interaction, pool, \{ alreadyDeferred: true \}\)/);
+  // Additional dispatch context (such as officer-only controls) must not
+  // invalidate the check that the private command was already deferred.
+  assert.match(bot, /handleFaeCommand\(interaction, pool, \{(?=[^}]*\balreadyDeferred:\s*true)[^}]*\}\)/);
   assert.match(bot, /Privacy gate configuration failed/);
   assert.match(compose, /ANIME_TIMEZONE: \$\{ANIME_TIMEZONE:-America\/Chicago\}/);
 });

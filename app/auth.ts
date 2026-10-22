@@ -76,6 +76,8 @@ const providers = authProvider === "authentik"
       }
     })]
   : [Discord({
+      // Discord includes its issuer in OAuth callbacks; validate against Discord, not Auth.js's fallback.
+      issuer: "https://discord.com",
       clientId: process.env.AUTH_DISCORD_ID || process.env.DISCORD_APPLICATION_ID!,
       clientSecret: process.env.AUTH_DISCORD_SECRET!,
       profile(profile) {

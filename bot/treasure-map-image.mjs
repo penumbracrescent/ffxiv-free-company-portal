@@ -8,11 +8,18 @@ function isParchment(r, g, b) {
   return r >= 72 && g >= 58 && b <= 218 && r >= b * 0.88 && g >= b * 0.78 && brightest - darkest <= 150;
 }
 
-function findParchmentCandidates(data, width, height, channels) {
+// Rare maps use muted blue paper. Keep this separate so ordinary map crops
+// and their existing reference fingerprints remain unchanged.
+function isBlueMapPaper(r, g, b) {
+  return r >= 65 && g >= 90 && b >= 100 && b >= r * 1.05 && b <= r * 2.2 &&
+    g >= r * 0.95 && Math.abs(g - b) <= 65 && Math.max(r, g, b) - Math.min(r, g, b) <= 110;
+}
+
+function findParchmentCandidates(data, width, height, channels, paper = isParchment) {
   const mask = new Uint8Array(width * height);
   for (let i = 0; i < mask.length; i += 1) {
     const offset = i * channels;
-    mask[i] = isParchment(data[offset], data[offset + 1], data[offset + 2]) ? 1 : 0;
+    mask[i] = paper(data[offset], data[offset + 1], data[offset + 2]) ? 1 : 0;
   }
 
   const visited = new Uint8Array(mask.length);
@@ -68,12 +75,12 @@ function findParchmentCandidates(data, width, height, channels) {
   return candidates.sort((a, b) => b.score - a.score);
 }
 
-async function isolateTreasureMapCandidates(buffer) {
+async function isolateTreasureMapCandidates(buffer, paper = isParchment) {
   const base = sharp(buffer, { failOn: "warning" }).rotate();
   const metadata = await base.metadata();
   if (!metadata.width || !metadata.height) throw new Error("The image dimensions could not be read.");
   const analysis = await base.clone().resize({ width: MAX_ANALYSIS_EDGE, height: MAX_ANALYSIS_EDGE, fit: "inside", withoutEnlargement: true }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const candidates = findParchmentCandidates(analysis.data, analysis.info.width, analysis.info.height, analysis.info.channels);
+  const candidates = findParchmentCandidates(analysis.data, analysis.info.width, analysis.info.height, analysis.info.channels, paper);
   const original = await base.toBuffer();
   if (!candidates.length) return { original, buffers: [] };
   const scaleX = metadata.width / analysis.info.width;
@@ -180,18 +187,18 @@ async function refineEmbeddedCardAroundMarker(buffer, marker) {
   return sharp(buffer).extract({ left, top, width: Math.round(estimatedWidth), height: Math.round(estimatedHeight) }).toBuffer();
 }
 
-async function parchmentCoverage(buffer) {
+async function parchmentCoverage(buffer, paper = isParchment) {
   const { data, info } = await sharp(buffer).resize({ width: 180, height: 180, fit: "inside" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   let parchment = 0;
   for (let index = 0; index < info.width * info.height; index += 1) {
     const offset = index * info.channels;
-    if (isParchment(data[offset], data[offset + 1], data[offset + 2])) parchment += 1;
+    if (paper(data[offset], data[offset + 1], data[offset + 2])) parchment += 1;
   }
   return parchment / Math.max(1, info.width * info.height);
 }
 
-export async function analyzeTreasureMapImage(buffer) {
-  const detected = await isolateTreasureMapCandidates(buffer);
+async function analyzePaperMap(buffer, paper = isParchment) {
+  const detected = await isolateTreasureMapCandidates(buffer, paper);
   if (!detected.buffers.length) return { isMap: false, card: detected.original };
   for (const candidate of detected.buffers) {
     const marker = await findCenteredRedMarker(candidate);
@@ -200,9 +207,16 @@ export async function analyzeTreasureMapImage(buffer) {
   const embeddedMarker = await findCenteredRedMarker(detected.original, { embedded: true });
   if (embeddedMarker) {
     const embeddedCard = await refineEmbeddedCardAroundMarker(detected.original, embeddedMarker);
-    if (await parchmentCoverage(embeddedCard) >= 0.3) return { isMap: true, card: embeddedCard };
+    if (await parchmentCoverage(embeddedCard) >= 0.3 || (paper === isBlueMapPaper && await parchmentCoverage(embeddedCard, paper) >= 0.3)) return { isMap: true, card: embeddedCard };
   }
   return { isMap: false, card: detected.buffers[0] };
+}
+
+export async function analyzeTreasureMapImage(buffer) {
+  const ordinary = await analyzePaperMap(buffer);
+  if (ordinary.isMap) return ordinary;
+  const blue = await analyzePaperMap(buffer, isBlueMapPaper);
+  return blue.isMap ? blue : ordinary;
 }
 
 async function cropScreenshotFrame(buffer) {

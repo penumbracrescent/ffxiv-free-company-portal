@@ -1,0 +1,12 @@
+import {validWorkshops} from './solo-workshop.mjs';
+export const emptyPlan=()=>({list:[],stock:{},hqStock:{},done:{},overrides:{},locations:{},methods:{},hqGoals:{},workshops:[],workshopView:'combined'});
+export function mergeTargets(current,incoming){const map=new Map(current.map(i=>[i.id,{...i}]));for(const i of incoming){const old=map.get(i.id);map.set(i.id,{...i,quantity:Math.min(10000,(old?.quantity||0)+i.quantity),hq:Math.min(10000,(old?.hq||0)+(i.hq||0))});}return [...map.values()].slice(0,100);}
+export function parseTargets(text){return String(text||'').split(',').map(part=>{const [id,quantity,hq=0]=part.split(':').map(Number);return {id,quantity,hq:Math.min(hq,quantity),name:'Loading item…'};}).filter(i=>Number.isSafeInteger(i.id)&&i.id>0&&Number.isInteger(i.quantity)&&i.quantity>0&&i.quantity<=10000&&Number.isInteger(i.hq)&&i.hq>=0).slice(0,100);}
+export function newLibrary(legacy=null){return {active:'default',lists:[{id:'default',name:'My craft list',plan:{...emptyPlan(),...legacy}}]};}
+export function ownedCredit(required,hqGoal,total,hq){const stock=Math.max(0,Number(total)||0),hqStock=Math.min(stock,Math.max(0,Number(hq)||0));return Math.min(required-hqGoal,stock-hqStock)+Math.min(hqGoal,hqStock)+Math.min(Math.max(0,required-hqGoal-(stock-hqStock)),Math.max(0,hqStock-hqGoal));}
+export function validLibrary(value){
+ if(!value||!Array.isArray(value.lists)||!value.lists.length||value.lists.length>30||!value.lists.some(l=>l.id===value.active))return false;
+ if(new Set(value.lists.map(l=>l.id)).size!==value.lists.length)return false;
+ if(value.lists.some(l=>l.plan?.workshops!=null&&!validWorkshops(l.plan.workshops)||l.plan?.workshopView!=null&&!['combined','phases'].includes(l.plan.workshopView)))return false;
+ return value.lists.every(l=>typeof l.id==='string'&&l.id.length<=100&&typeof l.name==='string'&&l.name.length>0&&l.name.length<=80&&Array.isArray(l.plan?.list)&&l.plan.list.length<=100&&new Set(l.plan.list.map(i=>i.id)).size===l.plan.list.length&&l.plan.list.every(i=>Number.isSafeInteger(i.id)&&i.id>0&&typeof i.name==='string'&&Number.isInteger(i.quantity)&&i.quantity>0&&i.quantity<=10000&&(i.hq==null||Number.isInteger(i.hq)&&i.hq>=0&&i.hq<=i.quantity))&&['stock','hqStock','done','overrides','locations','methods'].every(k=>l.plan[k]==null||typeof l.plan[k]==='object'&&!Array.isArray(l.plan[k])&&Object.keys(l.plan[k]).length<=2000&&Object.entries(l.plan[k]).every(([id,v])=>/^\d+$/.test(id)&&(k==='methods'?['craft','gather','hunt','buy'].includes(v):Number.isSafeInteger(v)&&v>=0&&v<=100000000))));
+}

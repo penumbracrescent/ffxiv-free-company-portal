@@ -1,3 +1,4 @@
+import {trailerForSeries} from './trailers.mjs';
 import http from "node:http";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -106,6 +107,7 @@ export function createServer(config) {
           ...(await syncStatus(config.discordHorizonDays))
         });
       }
+      if(request.method==='GET'&&url.pathname==='/api/trailer'){const result=await trailerForSeries(url.searchParams.get('series'),config);return json(response,result.status,result.payload);}
       if (request.method === "GET" && url.pathname === "/api/platforms") return json(response, 200, { platforms: await listPlatforms() });
       if (request.method === "GET" && ["/api/releases", "/api/upcoming"].includes(url.pathname)) {
         const range = dateRange(url);

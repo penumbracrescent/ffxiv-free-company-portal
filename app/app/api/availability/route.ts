@@ -31,11 +31,9 @@ export async function POST(request:Request){
   try{
     await ensureAvailabilityTables(client);await requireAvailabilityMember(client,id);const body=await request.json();
     if(body?.action==="clear"){await client.query(`delete from portal_member_availability_profiles where discord_user_id=$1`,[id]);await ensureEventPlanningTables(client);await client.query(`update portal_event_plan_interest i set availability_source=null,availability_confirmed_at=null,updated_at=now() from portal_event_plans p where p.id=i.plan_id and p.status='collecting' and i.discord_user_id=$1 and i.status='interested' and i.availability_source='saved'`,[id]);return NextResponse.json({ok:true,availability:await readAvailability(client,id)});}
-    if(body?.action==="confirm"){await client.query(`update portal_member_availability_profiles set last_confirmed_at=now(),updated_at=now() where discord_user_id=$1`,[id]);await ensureEventPlanningTables(client);await client.query(`update portal_event_plan_interest i set availability_source='saved',availability_confirmed_at=now(),updated_at=now() from portal_event_plans p where p.id=i.plan_id and p.status='collecting' and i.discord_user_id=$1 and i.status='interested' and (i.availability_source is null or i.availability_source='saved')`,[id]);return NextResponse.json({ok:true,availability:await readAvailability(client,id)});}
+    if(body?.action==="confirm"){await client.query(`update portal_member_availability_profiles set last_confirmed_at=now(),updated_at=now() where discord_user_id=$1`,[id]);return NextResponse.json({ok:true,availability:await readAvailability(client,id)});}
     const windows=Array.isArray(body?.windows)?body.windows.map((window:Record<string,unknown>):AvailabilityWindow=>({day:Number(window.day),slot:Number(window.slot),start:Number(window.start),end:Number(window.end)})):[];
     const availability=await saveAvailability(client,id,{timeZone:String(body?.timeZone||""),scope:String(body?.scope||"") as AvailabilityScope,windows});
-    await ensureEventPlanningTables(client);
-    await client.query(`update portal_event_plan_interest i set availability_source='saved',availability_confirmed_at=now(),updated_at=now() from portal_event_plans p where p.id=i.plan_id and p.status='collecting' and i.discord_user_id=$1 and i.status='interested' and i.availability_confirmed_at is null`,[id]);
     return NextResponse.json({ok:true,availability});
   }catch(error){return errorResponse(error);}finally{await client.end();}
 }

@@ -89,9 +89,14 @@ async function animeDetail(route, config) {
   throw new Error(`AnimeSchedule detail rate limit persisted for ${route}.`);
 }
 
+export function confirmedEpisodeCount(detail) {
+  const value = Number(detail?.episodes);
+  return Number.isInteger(value) && value>0 ? value : null;
+}
+
 function toObservation(row, checkedAt, detail = null) {
   const language = String(row.airType || "").toLowerCase();
-  if (!new Set(["sub", "dub"]).has(language)) return null;
+  if (!new Set(["sub", "dub", "raw"]).has(language)) return null;
   if (!row.episodeDate || !Number.isFinite(new Date(row.episodeDate).getTime())) return null;
   const episodeNumber = Number(row.episodeNumber);
   const firstEpisode = Number(row.subtractedEpisodeNumber);
@@ -117,6 +122,8 @@ function toObservation(row, checkedAt, detail = null) {
     sourceRoute: row.route || null,
     sourceUrl: row.route ? `https://animeschedule.net/anime/${row.route}` : null,
     description: descriptionText(detail?.description), 
+    episodeCount: confirmedEpisodeCount(detail),
+    metadataCheckedAt: detail ? checkedAt : null,
     seriesStatus: row.status || "unknown",
     episodeNumber: Number.isFinite(episodeNumber) ? episodeNumber : null,
     episodeLabel,

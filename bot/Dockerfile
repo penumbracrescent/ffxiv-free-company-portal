@@ -1,4 +1,4 @@
-FROM node:24-alpine
+FROM node:24.22.1-alpine
 
 WORKDIR /bot
 
@@ -7,6 +7,7 @@ RUN corepack enable && pnpm install --prod --frozen-lockfile
 
 COPY *.mjs ./
 COPY data ./data
+COPY gear ./gear
 
 ENV NODE_ENV=production
 

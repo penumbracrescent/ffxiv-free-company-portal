@@ -9,7 +9,10 @@ export async function GET(request: Request) {
   if ("error" in access) return access.error;
   const itemId = Number.parseInt(new URL(request.url).searchParams.get("itemId") || "", 10);
   try {
-    const data = await getCraftingCalculatorData(itemId);
+    const requested = new URL(request.url).searchParams.get("recipeId");
+    const recipeId=requested===null?undefined:Number(requested);
+    if(recipeId!==undefined&&(!Number.isSafeInteger(recipeId)||recipeId<1))return NextResponse.json({error:"Invalid recipe."},{status:400});
+    const data = await getCraftingCalculatorData(itemId, recipeId);
     if (!data) return NextResponse.json({ error: "No simulation-ready recipe was found for that item." }, { status: 404 });
     return NextResponse.json(data, { headers: { "Cache-Control": "private, max-age=300" } });
   } catch {

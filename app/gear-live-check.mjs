@@ -1,0 +1,4 @@
+import {calculate} from './lib/gear/service.mjs';import {buildBasket}from './lib/gear/core.mjs';
+const pairs=process.argv.slice(2);for(const pair of pairs.length?pairs:['BLM:81','RDM:57','PLD:57','WAR:57','BTN:57','CRP:57','FSH:57']){
+ const [job,level]=pair.split(':');const start=Date.now();try{const data=await calculate({job,level:Number(level),world:54,scope:'dc'});const basket=buildBasket(data);if(data.items.some(i=>i.level>Number(level)||!i.jobs.includes(job)))throw Error('Eligibility violation');console.log(JSON.stringify({job,level,items:data.items.length,offers:Object.values(data.offers).flat().length,total:basket.total,missing:basket.missing,offhand:basket.rows.find(r=>r.slot==='OffHand')?.item?.name,slots:basket.rows.filter(r=>r.item).map(r=>({slot:r.slot,name:r.item.name,quality:r.quality,cost:r.cost})),warnings:data.warnings,seconds:(Date.now()-start)/1000}));}catch(e){console.error(pair,e);process.exitCode=1;}
+}

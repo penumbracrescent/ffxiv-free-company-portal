@@ -7,8 +7,9 @@ type Release = {
   id: string;
   release_key: string;
   episode_label: string | null;
+  episode_number?: number | null;
   release_kind: string;
-  language: "sub" | "dub";
+  language: "sub" | "dub" | "raw";
   status: "confirmed" | "expected" | "delayed" | "unknown" | "released";
   starts_at: string;
   duration_minutes: number | null;
@@ -59,6 +60,16 @@ function delayLabel(release: Release) {
 }
 function platformKey(name: string) { return name.toLowerCase().replace(/[^a-z0-9]+/g, "").replace("primevideo", "amazon"); }
 function firstOfCurrentMonth() { const today=dayKey(new Date().toISOString()).split("-").map(Number); return new Date(Date.UTC(today[0],today[1]-1,1)); }
+function markedRelease(release: Release) {
+  const premiere = variants(release).some((item) => {
+    const kind = item.release_kind || "episode";
+    if (!["episode", "batch"].includes(kind)) return false;
+    const label = String(item.episode_label || "").trim();
+    if (kind === "batch") return /^0*1\s*[-–—]\s*\d+(?:\.0+)?$/.test(label);
+    return label ? /^0*1(?:\.0+)?$/.test(label) : Number(item.episode_number) === 1;
+  });
+  return { ...release, english_title: (premiere ? "⭐ " : "") + release.english_title.replace(/^⭐\s*/, "") };
+}
 
 export default function AnimeReleaseCalendar({
   subCalendarId = "",
@@ -94,7 +105,7 @@ export default function AnimeReleaseCalendar({
     const today = userDayKey(new Date().toISOString()).split("-").map(Number);
     return new Date(Date.UTC(today[0], today[1] - 1, 1));
   };
-  const [language, setLanguage] = useState<"all" | "sub" | "dub">(defaultLanguage);
+  const [language, setLanguage] = useState<"all" | "sub" | "dub" | "raw">(defaultLanguage);
   const [platforms, setPlatforms] = useState<string[]>(defaultPlatforms);
   const [display, setDisplay] = useState<"calendar" | "upcoming">(defaultDisplay);
   const [monthCursor, setMonthCursor] = useState(userFirstOfCurrentMonth);
@@ -105,7 +116,7 @@ export default function AnimeReleaseCalendar({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); if(["all","sub","dub"].includes(saved.language)) setLanguage(saved.language); if(Array.isArray(saved.platforms)) setPlatforms(saved.platforms); if(["calendar","upcoming"].includes(saved.display)) setDisplay(saved.display); } catch { /* Ignore an invalid saved preference. */ }
+    try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); if(["all","sub","dub","raw"].includes(saved.language)) setLanguage(saved.language); if(Array.isArray(saved.platforms)) setPlatforms(saved.platforms); if(["calendar","upcoming"].includes(saved.display)) setDisplay(saved.display); } catch { /* Ignore an invalid saved preference. */ }
   }, []);
   useEffect(() => { localStorage.setItem(STORAGE_KEY,JSON.stringify({language,platforms,display})); }, [language,platforms,display]);
   useEffect(() => {
@@ -130,10 +141,10 @@ export default function AnimeReleaseCalendar({
   },[detail]);
 
   const displayReleases=useMemo(()=>{
-    if(language!=="all")return releases;
+    if(language!=="all")return releases.map(markedRelease);
     const merged=new Map<string,Release>();
     releases.forEach((release)=>{const key=`${release.series_key}:${userDayKey(release.starts_at)}`;const existing=merged.get(key);if(!existing){merged.set(key,{...release,variants:[release]});return;}const combinedPlatforms=new Map([...(existing.platforms||[]),...(release.platforms||[])].map((platform)=>[platform.key,platform]));existing.variants=[...(existing.variants||[existing]),release];existing.platforms=[...combinedPlatforms.values()];if(release.status==="delayed")existing.status="delayed";});
-    return [...merged.values()].sort((a,b)=>new Date(a.starts_at).getTime()-new Date(b.starts_at).getTime());
+    return [...merged.values()].map(markedRelease).sort((a,b)=>new Date(a.starts_at).getTime()-new Date(b.starts_at).getTime());
   },[releases,language]);
   const groups=useMemo(()=>{const map=new Map<string,Release[]>();displayReleases.forEach((release)=>{const key=userDayKey(release.starts_at);map.set(key,[...(map.get(key)||[]),release]);});return[...map.entries()].sort(([a],[b])=>a.localeCompare(b));},[displayReleases]);
   const calendar=useMemo(()=>{const today=userDayKey(new Date().toISOString());const first=new Date(monthCursor);const start=new Date(first);start.setUTCDate(first.getUTCDate()-first.getUTCDay());const byDay=new Map(groups);return{title:new Intl.DateTimeFormat("en-US",{month:"long",year:"numeric",timeZone:"UTC"}).format(first),today,days:Array.from({length:42},(_,offset)=>{const date=new Date(start);date.setUTCDate(start.getUTCDate()+offset);const key=date.toISOString().slice(0,10);return{key,number:date.getUTCDate(),inMonth:date.getUTCMonth()===first.getUTCMonth(),items:byDay.get(key)||[]};})};},[groups,monthCursor]);
@@ -143,11 +154,11 @@ export default function AnimeReleaseCalendar({
   function openDay(items:Release[]){if(items.length)setDetail({title:userDateLabel(items[0].starts_at),releases:items});}
 
   return <section id="anime-calendar" className="anime-calendar-panel">
-    <div className="section-title-row"><div><p className="eyebrow">Release Guide</p><h2>Anime Release Calendar</h2><p>{timeZoneMode === "local" ? "Subbed and dubbed releases shown in your browser’s local time." : "Subbed and dubbed releases shown in Central time."} Confirmed times replace estimates as sources publish updates.</p></div></div>
+    <div className="section-title-row"><div><p className="eyebrow">Release Guide</p><h2>Anime Release Calendar</h2><p>{timeZoneMode === "local" ? "Releases shown in your browser’s local time." : "Releases shown in Central time."} RAW means original broadcast time; it appears only until a SUB/DUB schedule is identified. ⭐ marks episode 1.</p></div></div>
     {subCalendarId || dubCalendarId ? <div className="anime-subscribe-links" aria-label="Google Calendar subscriptions"><span>Add releases to Google Calendar:</span>{subCalendarId ? <a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(subCalendarId)}`} target="_blank" rel="noreferrer">Subscribe to SUB</a> : null}{dubCalendarId ? <a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(dubCalendarId)}`} target="_blank" rel="noreferrer">Subscribe to DUB</a> : null}</div> : null}
     <div className="anime-view-toggle" aria-label="Release view"><button type="button" className={display==="upcoming"?"active":""} onClick={()=>setDisplay("upcoming")}>Upcoming</button><button type="button" className={display==="calendar"?"active":""} onClick={()=>setDisplay("calendar")}>Calendar</button></div>
     <div className="anime-filter-panel">
-      <fieldset><legend>Language</legend><div className="anime-filter-buttons">{(["all","sub","dub"] as const).map((value)=><button type="button" key={value} className={language===value?"active":""} onClick={()=>setLanguage(value)}>{value==="all"?"Sub + Dub":value.toUpperCase()}</button>)}</div></fieldset>
+      <fieldset><legend>Language</legend><div className="anime-filter-buttons">{(["all","sub","dub","raw"] as const).map((value)=><button type="button" key={value} className={language===value?"active":""} onClick={()=>setLanguage(value)}>{value==="all"?"All releases":value.toUpperCase()}</button>)}</div></fieldset>
       <fieldset><legend>Platforms</legend><div className="anime-filter-buttons">{serviceNames.map((name)=>{const key=platformKey(name);return<button type="button" key={name} className={platforms.includes(key)?"active":""} onClick={()=>setPlatforms((current)=>current.includes(key)?current.filter((item)=>item!==key):[...current,key])}>{name}</button>;})}<button type="button" onClick={()=>setPlatforms([])}>Clear</button></div></fieldset>
     </div>
     {loading?<p className="empty-state">Loading release calendar…</p>:error?<p className="empty-state">{error}</p>:display==="calendar"?<div className="anime-month"><div className="anime-month-heading"><button type="button" onClick={()=>changeMonth(-1)} aria-label="Previous month">‹</button><h3>{calendar.title}</h3><div><button type="button" onClick={()=>setMonthCursor(userFirstOfCurrentMonth())}>Today</button><button type="button" onClick={()=>changeMonth(1)} aria-label="Next month">›</button></div></div><div className="anime-weekdays">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day)=><span key={day}>{day}</span>)}</div><div className="anime-month-grid">{calendar.days.map((day)=><article key={day.key} className={`${day.inMonth?"":"outside"} ${day.key===calendar.today?"today":""}`}><button type="button" className="anime-day-number" onClick={()=>openDay(day.items)} disabled={!day.items.length} aria-label={day.items.length?`Open ${day.items.length} releases for this day`:undefined}>{day.number}</button>{day.items.slice(0,4).map((release)=><button type="button" className="anime-calendar-event" key={release.release_key} onClick={()=>openRelease(release)} title={`${release.english_title} — ${userReleaseTimeLabel(release)}${userDelayLabel(release)?` — ${userDelayLabel(release)}`:""}`}><b>{userTimeLabel(release.starts_at).replace(/\s+(CST|CDT)$/," ")}</b> {release.english_title} <em>{languageLabel(release)}</em></button>)}{day.items.length>4?<button type="button" className="anime-more-button" onClick={()=>openDay(day.items)}>+{day.items.length-4} more</button>:null}</article>)}</div></div>:groups.length===0?<p className="empty-state">No matching releases are currently scheduled.</p>:<div className="anime-day-grid">{groups.map(([date,items])=><article className="anime-day" key={date}><h3><button type="button" onClick={()=>openDay(items)}>{userDateLabel(items[0].starts_at)}</button></h3><div>{items.map((release)=><button type="button" className="anime-release" key={release.release_key} onClick={()=>openRelease(release)}>{release.image_url?<img src={release.image_url} alt="" loading="lazy"/>:null}<span><span className="anime-release-heading"><strong>{release.english_title}</strong><span className={`anime-status ${statusLabel(release)}`}>{statusLabel(release)}</span></span><span>{releaseLabel(release)}</span><span>{userReleaseTimeLabel(release)}{release.platforms.length?` · ${release.platforms.map((platform)=>platform.name).join(", ")}`:""}</span>{userDelayLabel(release)?<span className="anime-delay-detail">{userDelayLabel(release)}</span>:null}</span></button>)}</div></article>)}</div>}

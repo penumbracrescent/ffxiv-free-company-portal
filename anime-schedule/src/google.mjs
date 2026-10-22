@@ -1,6 +1,7 @@
 import { createSign } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { outputFeed, saveExternalMapping } from "./queries.mjs";
+import { outputFeed, saveExternalMapping, supersededRawMappings } from "./queries.mjs";
+import { premiereTitle } from "./premiere.mjs";
 
 function base64url(value) { return Buffer.from(value).toString("base64url"); }
 async function credentials(config) {
@@ -9,7 +10,7 @@ async function credentials(config) {
   if (!value.client_email || !value.private_key) throw new Error("Google service-account credentials are incomplete.");
   return value;
 }
-async function accessToken(config) {
+export async function accessToken(config) {
   const account = await credentials(config); const now = Math.floor(Date.now() / 1000);
   const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const claims = base64url(JSON.stringify({ iss: account.client_email, scope: "https://www.googleapis.com/auth/calendar", aud: account.token_uri || "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 }));
@@ -18,11 +19,11 @@ async function accessToken(config) {
   const response = await fetch(account.token_uri || "https://oauth2.googleapis.com/token", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }), signal: AbortSignal.timeout(15000) });
   const payload = await response.json(); if (!response.ok) throw new Error(payload.error_description || "Google token request failed."); return payload.access_token;
 }
-function eventPayload(release, timezone) {
+export function eventPayload(release, timezone) {
   const start = new Date(release.starts_at); const end = new Date(start.getTime() + Math.max(15, Number(release.duration_minutes || 30)) * 60000);
   const synopsis = String(release.description || "Synopsis not available yet.").trim();
-  const availability = `${String(release.status || "scheduled").replace(/^./, (letter) => letter.toUpperCase())} anime release${release.platforms?.length ? ` on ${release.platforms.map((platform) => platform.name).join(", ")}` : ""}.`;
-  return { summary: `${release.english_title} — Episode ${release.episode_label || "TBA"} (${String(release.language).toUpperCase()})`, description: `${synopsis}\n\n${availability}`.slice(0, 8000), start: { dateTime: start.toISOString(), timeZone: timezone }, end: { dateTime: end.toISOString(), timeZone: timezone }, extendedProperties: { private: { cotfReleaseKey: release.release_key, cotfLanguage: release.language } } };
+  const availability = release.language === 'raw' ? 'Original broadcast (RAW). Subtitle/dub release time has not been identified yet; this entry will be replaced when it is available.' : `${String(release.status || "scheduled").replace(/^./, (letter) => letter.toUpperCase())} anime release${release.platforms?.length ? ` on ${release.platforms.map((platform) => platform.name).join(", ")}` : ""}.`;
+  return { summary: `${premiereTitle(release)} — Episode ${release.episode_label || "TBA"} (${String(release.language).toUpperCase()})`, description: `${synopsis}\n\n${availability}`.slice(0, 8000), start: { dateTime: start.toISOString(), timeZone: timezone }, end: { dateTime: end.toISOString(), timeZone: timezone }, extendedProperties: { private: { cotfReleaseKey: release.release_key, cotfLanguage: release.language } } };
 }
 async function googleRequest(token, url, options = {}) { const response = await fetch(url, { ...options, headers: { authorization: `Bearer ${token}`, "content-type": "application/json", ...(options.headers || {}) }, signal: AbortSignal.timeout(15000) }); const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error?.message || `Google Calendar returned HTTP ${response.status}.`); return data; }
 export function googleCalendarTargets(config) {
@@ -50,7 +51,8 @@ export async function syncGoogleCalendar(config, { dryRun = config.googleDryRun 
   if (missing.length) throw new Error(`Missing Google Calendar ID for: ${missing.join(", ")}.`);
   const token = dryRun ? null : await accessToken(config);
   for (const target of targets) {
-    const releases = await outputFeed({ kind: "google", languages: [target.language], horizonDays: 90 });
+    // RAW placeholders use the SUB calendar, without being labelled as SUB.
+    const releases = await outputFeed({ kind: "google", languages: target.language === 'sub' ? ['sub','raw'] : [target.language], horizonDays: 90 });
     const calendar = encodeURIComponent(target.calendarId); const calendarResult = result.calendars[target.language];
     for (const release of releases) {
       const event = eventPayload(release, config.timezone); const hash = base64url(JSON.stringify(event));
@@ -58,10 +60,26 @@ export async function syncGoogleCalendar(config, { dryRun = config.googleDryRun 
       if (mappingMatchesCalendar && release.last_payload_hash === hash) { result.unchanged++; calendarResult.unchanged++; continue; }
       if (dryRun) { if (mappingMatchesCalendar) { result.updated++; calendarResult.updated++; } else { result.created++; calendarResult.created++; } continue; }
       let saved;
-      if (mappingMatchesCalendar) { saved = await googleRequest(token, `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events/${encodeURIComponent(release.external_event_id)}`, { method: "PUT", body: JSON.stringify(event) }); result.updated++; calendarResult.updated++; }
+      if (mappingMatchesCalendar) { saved = await googleRequest(token, `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events/${encodeURIComponent(release.external_event_id)}`, { method: "PATCH", body: JSON.stringify(event) }); result.updated++; calendarResult.updated++; }
       else { saved = await googleRequest(token, `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events`, { method: "POST", body: JSON.stringify(event) }); result.created++; calendarResult.created++; }
       await saveExternalMapping({ kind: "google", releaseId: release.id, externalEventId: saved.id, externalContainerId: target.calendarId, payloadHash: hash, status: "active" });
     }
+  }
+  // Only retire owned RAW placeholders after all replacement writes succeeded.
+  result.retiredRaw = 0;
+  for (const mapping of await supersededRawMappings('google')) {
+    if (!targets.some(target => target.calendarId === mapping.external_container_id)) continue;
+    if (dryRun) { result.retiredRaw++; continue; }
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(mapping.external_container_id)}/events/${encodeURIComponent(mapping.external_event_id)}`;
+    const response = await fetch(url, {headers:{authorization:`Bearer ${token}`},signal:AbortSignal.timeout(15000)});
+    if (![404,410].includes(response.status)) {
+      if (!response.ok) throw new Error(`Google RAW lookup returned HTTP ${response.status}.`);
+      const existing = await response.json();
+      if (existing.extendedProperties?.private?.cotfReleaseKey !== mapping.release_key) throw new Error('RAW placeholder ownership mismatch; refusing deletion.');
+      if (existing.status !== 'cancelled') await googleRequest(token,url,{method:'DELETE'});
+    }
+    await saveExternalMapping({kind:'google',releaseId:mapping.id,externalEventId:mapping.external_event_id,externalContainerId:mapping.external_container_id,payloadHash:null,status:'retired'});
+    result.retiredRaw++;
   }
   return result;
 }

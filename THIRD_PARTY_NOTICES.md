@@ -253,3 +253,15 @@ the operator must independently follow the policy's personal-production,
 no-payment, policy-link/QR, logo, crossover, 3D-printing, AI-derivative, and
 other physical-item restrictions. The portal does not grant permission to
 manufacture or distribute those items.
+
+## Gear Planner merchant dataset
+
+The Gear Planner bundles a derived equipment-vendor dataset from
+[FFXIV Teamcraft](https://github.com/ffxiv-teamcraft/ffxiv-teamcraft), pinned
+revision `c56afbc26b47501ceabb55cdb8d24e3c4d025abb`. Teamcraft's code/data
+distribution is MIT-licensed, copyright (c) 2017 Flavien Normand. The complete
+license is retained in `app/lib/gear/TEAMCRAFT-LICENSE.txt` and
+`bot/gear/TEAMCRAFT-LICENSE.txt`. FFXIV-derived names, coordinates and item data
+remain subject to the Square Enix materials boundary described above. Item
+icons are fetched from XIVAPI rather than bundled. Market listings come from
+Universalis, with price freshness shown in the planner.

@@ -24,8 +24,8 @@ async function upsertSeries(client, observation) {
   const aliases = allAliases(observation);
   const result = await client.query(`
     insert into anime.series (
-      series_key, english_title, romaji_title, native_title, aliases, image_url, status, source_route, description, source_url, description_updated_at, updated_at
-    ) values ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,case when $9::text is not null then now() else null end,now())
+      series_key, english_title, romaji_title, native_title, aliases, image_url, status, source_route, description, source_url, description_updated_at, episode_count, metadata_updated_at, updated_at
+    ) values ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,case when $9::text is not null then now() else null end,$11,$12,now())
     on conflict (series_key) do update set
       english_title = excluded.english_title,
       romaji_title = coalesce(excluded.romaji_title, anime.series.romaji_title),
@@ -40,11 +40,14 @@ async function upsertSeries(client, observation) {
       description = coalesce(excluded.description, anime.series.description),
       source_url = coalesce(excluded.source_url, anime.series.source_url),
       description_updated_at = case when excluded.description is not null then now() else anime.series.description_updated_at end,
+      episode_count = case when excluded.metadata_updated_at is not null then excluded.episode_count else anime.series.episode_count end,
+      metadata_updated_at = coalesce(excluded.metadata_updated_at,anime.series.metadata_updated_at),
       updated_at = now()
     returning id::int;`,
     [key, observation.englishTitle || observation.displayTitle, observation.romajiTitle, observation.nativeTitle,
       JSON.stringify(aliases), observation.imageUrl, String(observation.seriesStatus || "unknown").toLowerCase(),
-      observation.sourceRoute || null, observation.description || null, observation.sourceUrl || null]
+      observation.sourceRoute || null, observation.description || null, observation.sourceUrl || null,
+      observation.episodeCount || null, observation.metadataCheckedAt || null]
   );
   return Number(result.rows[0].id);
 }
